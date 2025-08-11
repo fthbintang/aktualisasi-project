@@ -13,11 +13,15 @@
             <ul class="navbar-nav d-flex align-items-center">
                 <!-- LOGOUT -->
                 <li class="nav-item d-flex align-items-center">
-                    <a href="javascript:;"
-                        class="nav-link text-white d-flex align-items-center px-3 py-2 rounded bg-gradient-danger shadow-sm">
-                        <i class="fa fa-sign-out me-2"></i>
-                        <span class="d-none d-sm-inline">Logout</span>
-                    </a>
+                    <form action="{{ route('logout') }}" method="POST" class="d-inline">
+                        @csrf
+                        <button type="submit"
+                            class="nav-link text-white d-flex align-items-center px-3 py-2 rounded bg-gradient-danger shadow-sm border-0">
+                            <i class="fa fa-sign-out me-2"></i>
+                            <span class="d-none d-sm-inline">Logout</span>
+                        </button>
+                    </form>
+
                 </li>
 
                 <!-- Toggler hanya muncul di layar kecil -->
