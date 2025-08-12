@@ -1,4 +1,4 @@
-<x-layout>
+<x-layout title="Dashboard">
     <div class="row">
         <!-- Total Laporan Bulan Ini -->
         <div class="col-xl-3 col-sm-6 mb-xl-0 mb-4">
@@ -7,7 +7,8 @@
                     <div class="row">
                         <div class="col-8">
                             <div class="numbers">
-                                <p class="mb-0 text-uppercase font-weight-bold" style="font-size: 0.75rem;">Total Laporan
+                                <p class="mb-0 text-uppercase font-weight-bold" style="font-size: 0.75rem;">Total
+                                    Laporan
                                     Bulan Ini</p>
                                 <h5 class="font-weight-bolder">
                                     34 Laporan

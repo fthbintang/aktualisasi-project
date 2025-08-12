@@ -30,7 +30,7 @@
 
     <main class="main-content position-relative border-radius-lg ">
         {{-- NAVBAR --}}
-        <x-navbar></x-navbar>
+        <x-navbar :title="$title"></x-navbar>
 
         <div class="container-fluid py-4">
             {{-- MAIN --}}
