@@ -29,8 +29,9 @@
     <x-sidebar></x-sidebar>
 
     <main class="main-content position-relative border-radius-lg ">
+        @props(['breadcrumbs'])
         {{-- NAVBAR --}}
-        <x-navbar></x-navbar>
+        <x-navbar :breadcrumbs="$breadcrumbs ?? ['Dashboard']"></x-navbar>
 
         <div class="container-fluid py-4">
             {{-- MAIN --}}
@@ -42,6 +43,11 @@
     </main>
 
     <x-configurator></x-configurator>
+
+    @include('sweetalert::alert')
+
+    {{-- SWEET ALERT --}}
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <!-- Bootstrap JS Bundle (dengan Popper) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

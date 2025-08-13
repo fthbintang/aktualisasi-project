@@ -17,19 +17,19 @@
 
         <x-sidebar-link href="{{ route('dashboard') }}" icon="ni ni-tv-2" label="Dashboard" />
 
-        <x-sidebar-link href="{{ route('dashboard.test') }}" icon="ni ni-calendar-grid-58" label="Dummy" />
+        <x-sidebar-link href="{{ route('pengguna.index') }}" icon="ni ni-single-02" label="Pengguna" />
 
-        <x-sidebar-link href="{{ route('dashboard.test') }}" icon="ni ni-credit-card" label="Dummy" />
+        <x-sidebar-link href="#" icon="ni ni-credit-card" label="Dummy" />
 
-        <x-sidebar-link href="{{ route('dashboard.test') }}" icon="ni ni-app" label="Dummy" />
+        <x-sidebar-link href="#" icon="ni ni-app" label="Dummy" />
 
-        <x-sidebar-link href="{{ route('dashboard.test') }}" icon="ni ni-world-2" label="Dummy" />
+        <x-sidebar-link href="#" icon="ni ni-world-2" label="Dummy" />
 
-        <x-sidebar-link href="{{ route('dashboard.test') }}" icon="ni ni-single-02" label="Dummy" />
+        <x-sidebar-link href="#" icon="ni ni-single-02" label="Dummy" />
 
-        <x-sidebar-link href="{{ route('dashboard.test') }}" icon="ni ni-single-copy-04" label="Dummy" />
+        <x-sidebar-link href="#" icon="ni ni-single-copy-04" label="Dummy" />
 
-        <x-sidebar-link href="{{ route('dashboard.test') }}" icon="ni ni-collection" label="Dummy" />
+        <x-sidebar-link href="#" icon="ni ni-collection" label="Dummy" />
 
     </ul>
     {{-- </div> --}}
