@@ -19,6 +19,8 @@
 
         <x-sidebar-link href="{{ route('pengguna.index') }}" icon="ni ni-single-02" label="Pengguna" />
 
+        <x-sidebar-link href="#" icon="ni ni-single-copy-04" label="Laporan" />
+
         <x-sidebar-link href="#" icon="ni ni-credit-card" label="Dummy" />
 
         <x-sidebar-link href="#" icon="ni ni-app" label="Dummy" />
@@ -26,8 +28,6 @@
         <x-sidebar-link href="#" icon="ni ni-world-2" label="Dummy" />
 
         <x-sidebar-link href="#" icon="ni ni-single-02" label="Dummy" />
-
-        <x-sidebar-link href="#" icon="ni ni-single-copy-04" label="Dummy" />
 
         <x-sidebar-link href="#" icon="ni ni-collection" label="Dummy" />
 
