@@ -29,8 +29,9 @@
     <x-sidebar></x-sidebar>
 
     <main class="main-content position-relative border-radius-lg ">
+        @props(['breadcrumbs'])
         {{-- NAVBAR --}}
-        <x-navbar :title="$title"></x-navbar>
+        <x-navbar :breadcrumbs="$breadcrumbs ?? ['Dashboard']"></x-navbar>
 
         <div class="container-fluid py-4">
             {{-- MAIN --}}

@@ -1,4 +1,4 @@
-<x-layout title="Pengguna">
+<x-layout :breadcrumbs="$breadcrumbs">
     <div class="container-fluid py-4">
         <div class="row">
             <div class="col-12">
@@ -6,10 +6,10 @@
                     <div class="card-header pb-0">
                         <div class="row">
                             <div class="col-sm-8">
-                                <h6>Data {{ $title }}</h6>
+                                <h6>Data {{ end($breadcrumbs) }}</h6>
                             </div>
                             <div class="col-sm-4 d-flex justify-content-end">
-                                <a href="#" class="btn btn-success">Tambah Data</a>
+                                <a href="{{ route('pengguna.create') }}" class="btn btn-success">Tambah Data</a>
                             </div>
                         </div>
                     </div>

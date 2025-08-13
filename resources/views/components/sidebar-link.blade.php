@@ -1,7 +1,13 @@
 @props(['href', 'icon', 'label'])
 
 @php
-    $isActive = url($href) === url()->current() ? 'active' : '';
+    $path = ltrim(parse_url($href, PHP_URL_PATH), '/');
+
+    if ($path === 'dashboard') {
+        $isActive = request()->is($path) ? 'active' : '';
+    } else {
+        $isActive = request()->is($path) || request()->is($path . '/*') ? 'active' : '';
+    }
 @endphp
 
 <li class="nav-item">
