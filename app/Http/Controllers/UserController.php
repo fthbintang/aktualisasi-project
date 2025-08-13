@@ -13,7 +13,7 @@ class UserController extends Controller
     {
         return view('pengguna.index', [
             'breadcrumbs' => ['Pengguna'],
-            'pengguna' => User::all(),
+            'pengguna' => User::latest()->get()
         ]);
     }
 
@@ -49,23 +49,52 @@ class UserController extends Controller
         }
     }
 
-    public function show(string $id)
+    public function edit(User $user)
     {
-        //
+        return view('pengguna.edit', [
+            'breadcrumbs' => ['Pengguna', 'Edit Pengguna'],
+            'pengguna' => $user
+        ]);
     }
 
-    public function edit(string $id)
+    public function update(Request $request, User $user)
     {
-        //
+        $validatedData = $request->validate([
+            'nama_lengkap' => 'required|string|max:255',
+            'role'         => 'required|string|max:255',
+            'username'     => 'required|string|max:255|unique:users,username,' . $user->id . ',id',
+            'password'     => 'nullable|string|min:6',
+        ]);
+
+        try {
+            if (!empty($validatedData['password'])) {
+                $validatedData['password'] = bcrypt($validatedData['password']);
+            } else {
+                unset($validatedData['password']);
+            }
+
+            // Update data pengguna tanpa foto dulu
+            $user->update($validatedData);
+
+            Alert::success('Sukses!', 'Data Berhasil Diupdate');
+            return redirect()->route('pengguna.index');
+        } catch (\Exception $e) {
+            Log::error('Gagal update pengguna', ['error' => $e->getMessage()]);
+            Alert::error('Error', 'Terjadi kesalahan saat mengupdate data');
+            return back()->withInput();
+        }
     }
 
-    public function update(Request $request, string $id)
+    public function destroy(User $user)
     {
-        //
-    }
+        try {
+            $user->delete();
 
-    public function destroy(string $id)
-    {
-        //
+            Alert::success('Berhasil', 'Data berhasil dihapus');
+            return redirect()->route('pengguna.index');
+        } catch (\Exception $e) {
+            Alert::error('Gagal', 'Terjadi kesalahan saat menghapus data');
+            return back();
+        }
     }
 }

@@ -48,13 +48,20 @@
                                                 </p>
                                             </td>
                                             <td class="text-center text-xs font-weight-bold mb-0">
-                                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs">
+                                                <a href="{{ route('pengguna.edit', $row->id) }}"
+                                                    class="text-warning font-weight-bold text-xs">
                                                     Edit
                                                 </a>
                                                 |
-                                                <a href="javascript:;" class="text-secondary font-weight-bold text-xs">
-                                                    Hapus
-                                                </a>
+                                                <form action="{{ route('pengguna.destroy', $row->id) }}" method="POST"
+                                                    class="d-inline form-delete">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button"
+                                                        class="btn btn-link p-0 m-0 text-danger text-xs btn-delete">
+                                                        Hapus
+                                                    </button>
+                                                </form>
                                             </td>
                                         </tr>
                                     @endforeach
@@ -66,4 +73,30 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.btn-delete');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const form = this.closest('form');
+                    Swal.fire({
+                        title: 'Yakin ingin menghapus?',
+                        text: "Data yang dihapus tidak bisa dikembalikan!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </x-layout>
