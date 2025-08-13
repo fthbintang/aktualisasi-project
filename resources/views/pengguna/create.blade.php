@@ -7,7 +7,7 @@
             <h6>{{ end($breadcrumbs) }}</h6>
         </div>
         <div class="card-body">
-            <form action="#" method="POST">
+            <form action="{{ route('pengguna.store') }}" method="POST">
                 @csrf
                 <div class="form-group mb-3">
                     <label for="nama_lengkap" class="form-label">

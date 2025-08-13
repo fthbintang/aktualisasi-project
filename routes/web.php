@@ -17,4 +17,5 @@ Route::middleware('auth')->group(function () {
     // PENGGUNA
     Route::get('/dashboard/pengguna', [UserController::class, 'index'])->name('pengguna.index');
     Route::get('/dashboard/pengguna/create', [UserController::class, 'create'])->name('pengguna.create');
+    Route::post('/dashboard/pengguna/create/store', [UserController::class, 'store'])->name('pengguna.store');
 });
