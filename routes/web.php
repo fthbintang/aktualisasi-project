@@ -31,6 +31,8 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/daftar_laporan', [DaftarLaporanController::class, 'index'])->name('daftar_laporan.index');
     Route::get('/dashboard/daftar_laporan/create_jenis_laporan', [DaftarLaporanController::class, 'create_jenis_laporan'])->name('daftar_laporan.create_jenis_laporan');
     Route::post('/dashboard/daftar_laporan/create_jenis_laporan/store', [DaftarLaporanController::class, 'store_jenis_laporan'])->name('daftar_laporan.store_jenis_laporan');
+    Route::get('/dashboard/daftar_laporan/edit_jenis_laporan/{id}', [DaftarLaporanController::class, 'editJenis'])->name('daftar_laporan.edit_jenis_laporan');
     Route::get('/dashboard/daftar_laporan/create_laporan', [DaftarLaporanController::class, 'create_laporan'])->name('daftar_laporan.create_laporan');
     Route::post('/dashboard/daftar_laporan/create_laporan/store', [DaftarLaporanController::class, 'store_laporan'])->name('daftar_laporan.store_laporan');
+    Route::get('/dashboard/daftar_laporan/edit_laporan/{id}', [DaftarLaporanController::class, 'editLaporan'])->name('daftar_laporan.edit_laporan');
 });

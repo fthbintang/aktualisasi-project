@@ -34,7 +34,8 @@
                                                 <th>{{ $jenis->nama_jenis }}</th>
                                                 <td></td>
                                                 <td class="text-end">
-                                                    <a href="#" class="btn btn-sm btn-warning">Edit Jenis</a>
+                                                    <a href="{{ route('daftar_laporan.edit_jenis_laporan', $jenis->id) }}"
+                                                        class="btn btn-sm btn-warning">Edit Jenis</a>
                                                     <form action="#" method="POST" class="d-inline"
                                                         onsubmit="return confirm('Yakin hapus jenis laporan ini?');">
                                                         @csrf
@@ -52,7 +53,8 @@
                                                     <td></td>
                                                     <td>{{ $laporan->nama_laporan }}</td>
                                                     <td>
-                                                        <a href="#" class="btn btn-sm btn-warning">Edit</a>
+                                                        <a href="{{ route('daftar_laporan.edit_laporan', $laporan->id) }}"
+                                                            class="btn btn-sm btn-warning">Edit</a>
                                                         <form action="#" method="POST" class="d-inline"
                                                             onsubmit="return confirm('Yakin hapus laporan ini?');">
                                                             @csrf

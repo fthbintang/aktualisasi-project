@@ -74,4 +74,26 @@ class DaftarLaporanController extends Controller
             return back()->withInput();
         }
     }
+
+    public function editJenis($id)
+    {
+        $jenis = JenisLaporan::findOrFail($id);
+
+        return view('daftar_laporan.edit_jenis_laporan', [
+            'breadcrumbs' => ['Daftar Laporan', 'Edit Jenis Laporan'],
+            'jenis' => $jenis
+        ]);
+    }
+
+    public function editLaporan($id)
+    {
+        $laporan = Laporan::findOrFail($id);
+        $jenisLaporan = JenisLaporan::all();
+
+        return view('daftar_laporan.edit_laporan', [
+            'breadcrumbs' => ['Daftar Laporan', 'Edit Laporan'],
+            'laporan' => $laporan,
+            'jenisLaporan' => $jenisLaporan
+        ]);
+    }
 }
