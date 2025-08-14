@@ -9,7 +9,7 @@
         </div>
 
         <div class="card-body">
-            <form action="#" method="POST">
+            <form action="{{ route('daftar_laporan.store_laporan') }}" method="POST">
                 @csrf
 
                 {{-- Pilih Jenis Laporan --}}

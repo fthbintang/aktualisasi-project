@@ -32,8 +32,8 @@
                                             {{-- Baris jenis laporan --}}
                                             <tr class="table-active">
                                                 <th>{{ $jenis->nama_jenis }}</th>
-                                                <td colspan="2">
-                                                    {{-- Tombol edit/hapus jenis laporan --}}
+                                                <td></td>
+                                                <td class="text-end">
                                                     <a href="#" class="btn btn-sm btn-warning">Edit Jenis</a>
                                                     <form action="#" method="POST" class="d-inline"
                                                         onsubmit="return confirm('Yakin hapus jenis laporan ini?');">
