@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
@@ -21,4 +22,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/pengguna/edit/{user}', [UserController::class, 'edit'])->name('pengguna.edit');
     Route::put('/dashboard/pengguna/edit/{user}/update', [UserController::class, 'update'])->name('pengguna.update');
     Route::delete('/dashboard/pengguna/destroy/{user}', [UserController::class, 'destroy'])->name('pengguna.destroy');
+
+    // LAPORAN
+    Route::get('/dashboard/laporan', [LaporanController::class, 'index'])->name('laporan.index');
 });

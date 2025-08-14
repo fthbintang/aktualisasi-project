@@ -20,6 +20,13 @@
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!-- CSS Files -->
     <link id="pagestyle" href="/assets/css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
+
+    {{-- <style>
+        * {
+            border: 1px solid red;
+        }
+    </style> --}}
+
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">

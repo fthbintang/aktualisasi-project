@@ -14,13 +14,13 @@ class Laporan extends Model
     protected $table = 'laporan';
     protected $guarded = ['id'];
 
-    public function jenis_laporan(): HasMany
+    public function jenis_laporan()
     {
-        return $this->hasMany(JenisLaporan::class);
+        return $this->belongsTo(JenisLaporan::class);
     }
 
-    public function upload_laporan(): BelongsTo
+    public function upload_laporan()
     {
-        return $this->belongsTo(UploadLaporan::class);
+        return $this->hasMany(UploadLaporan::class);
     }
 }

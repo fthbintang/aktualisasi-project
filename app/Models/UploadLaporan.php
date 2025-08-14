@@ -13,8 +13,8 @@ class UploadLaporan extends Model
     protected $table = 'upload_laporan';
     protected $guarded = ['id'];
 
-    public function laporan(): HasMany
+    public function laporan()
     {
-        return $this->hasMany(Laporan::class);
+        return $this->belongsTo(Laporan::class);
     }
 }
