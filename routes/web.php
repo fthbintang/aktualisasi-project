@@ -29,4 +29,6 @@ Route::middleware('auth')->group(function () {
 
     // DAFTAR LAPORAN
     Route::get('/dashboard/daftar_laporan', [DaftarLaporanController::class, 'index'])->name('daftar_laporan.index');
+    Route::get('/dashboard/daftar_laporan/create_jenis_laporan', [DaftarLaporanController::class, 'create_jenis_laporan'])->name('daftar_laporan.create_jenis_laporan');
+    Route::get('/dashboard/daftar_laporan/create_laporan', [DaftarLaporanController::class, 'create_laporan'])->name('daftar_laporan.create_laporan');
 });

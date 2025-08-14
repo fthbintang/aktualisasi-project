@@ -5,9 +5,15 @@
                 <div class="card mb-4">
                     <div class="card-header d-flex justify-content-between align-items-center">
                         <h5 class="mb-0">Daftar Laporan</h5>
-                        <a href="#" class="btn btn-primary">
-                            Tambah Jenis / Laporan
-                        </a>
+
+                        <div class="d-flex gap-2">
+                            <a href="{{ route('daftar_laporan.create_jenis_laporan') }}" class="btn btn-primary">
+                                + Jenis Laporan
+                            </a>
+                            <a href="{{ route('daftar_laporan.create_laporan') }}" class="btn btn-success">
+                                + Laporan
+                            </a>
+                        </div>
                     </div>
                     <div class="card-body">
                         {{-- Tabel Gabungan Jenis Laporan & Laporan --}}
