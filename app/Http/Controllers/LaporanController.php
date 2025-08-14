@@ -39,7 +39,4 @@ class LaporanController extends Controller
             'tahun'         => $tahun
         ]);
     }
-
-
-
 }

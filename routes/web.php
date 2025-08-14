@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\DaftarLaporanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
 use Illuminate\Support\Facades\Route;
@@ -25,4 +26,7 @@ Route::middleware('auth')->group(function () {
 
     // LAPORAN
     Route::get('/dashboard/laporan', [LaporanController::class, 'index'])->name('laporan.index');
+
+    // DAFTAR LAPORAN
+    Route::get('/dashboard/daftar_laporan', [DaftarLaporanController::class, 'index'])->name('daftar_laporan.index');
 });
