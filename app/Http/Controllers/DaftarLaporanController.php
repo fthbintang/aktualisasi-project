@@ -87,13 +87,49 @@ class DaftarLaporanController extends Controller
 
     public function editLaporan($id)
     {
-        $laporan = Laporan::findOrFail($id);
-        $jenisLaporan = JenisLaporan::all();
+        $laporan = Laporan::with('jenis_laporan')->findOrFail($id);
 
         return view('daftar_laporan.edit_laporan', [
             'breadcrumbs' => ['Daftar Laporan', 'Edit Laporan'],
-            'laporan' => $laporan,
-            'jenisLaporan' => $jenisLaporan
+            'laporan' => $laporan
         ]);
+    }
+
+    public function update_jenis_laporan(Request $request, JenisLaporan $jenis_laporan)
+    {
+        $validatedData = $request->validate([
+            'nama_jenis' => 'required|string|max:255',
+        ]);
+
+        try {
+            // Update data pengguna tanpa foto dulu
+            $jenis_laporan->update($validatedData);
+
+            Alert::success('Sukses!', 'Data Berhasil Diupdate');
+            return redirect()->route('daftar_laporan.index');
+        } catch (\Exception $e) {
+            Log::error('Gagal update Jenis Laporan', ['error' => $e->getMessage()]);
+            Alert::error('Error', 'Terjadi kesalahan saat mengupdate data');
+            return back()->withInput();
+        }
+    }
+
+    public function update_laporan(Request $request, Laporan $laporan)
+    {
+        $validatedData = $request->validate([
+            'nama_laporan' => 'required|string|max:255',
+        ]);
+
+        try {
+            // Update data laporan
+            $laporan->update($validatedData);
+
+            Alert::success('Sukses!', 'Laporan berhasil diupdate');
+            return redirect()->route('daftar_laporan.index');
+        } catch (\Exception $e) {
+            Log::error('Gagal update Laporan', ['error' => $e->getMessage()]);
+            Alert::error('Error', 'Terjadi kesalahan saat mengupdate data');
+            return back()->withInput();
+        }
     }
 }

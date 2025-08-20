@@ -7,7 +7,7 @@
             <h6>Edit Jenis Laporan</h6>
         </div>
         <div class="card-body">
-            <form action="#" method="POST">
+            <form action="{{ route('daftar_laporan.update_jenis_laporan', $jenis->id) }}" method="POST">
                 @csrf
                 @method('PUT')
                 <div class="form-group mb-3">

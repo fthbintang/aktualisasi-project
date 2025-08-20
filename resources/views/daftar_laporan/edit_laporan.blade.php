@@ -7,22 +7,16 @@
             <h6>Edit Laporan</h6>
         </div>
         <div class="card-body">
-            <form action="#" method="POST">
+            <form action="{{ route('daftar_laporan.update_laporan', $laporan->id) }}" method="POST">
                 @csrf
                 @method('PUT')
 
                 <div class="form-group mb-3">
-                    <label for="jenis_laporan_id" class="form-label">
+                    <label for="jenis_laporan" class="form-label">
                         <b>Jenis Laporan</b><span class="text-danger">*</span>
                     </label>
-                    <select name="jenis_laporan_id" id="jenis_laporan_id" class="form-select" required>
-                        @foreach ($jenisLaporan as $jenis)
-                            <option value="{{ $jenis->id }}"
-                                {{ $laporan->jenis_laporan_id == $jenis->id ? 'selected' : '' }}>
-                                {{ $jenis->nama_jenis }}
-                            </option>
-                        @endforeach
-                    </select>
+                    <input type="text" id="jenis_laporan" class="form-control"
+                        value="{{ old('jenis_laporan', $laporan->jenis_laporan->nama_jenis) }}" required readonly>
                 </div>
 
                 <div class="form-group mb-3">
