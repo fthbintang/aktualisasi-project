@@ -37,4 +37,6 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/daftar_laporan/create_laporan/store', [DaftarLaporanController::class, 'store_laporan'])->name('daftar_laporan.store_laporan');
     Route::get('/dashboard/daftar_laporan/edit_laporan/{id}', [DaftarLaporanController::class, 'editLaporan'])->name('daftar_laporan.edit_laporan');
     Route::put('/dashboard/daftar_laporan/edit_laporan/{laporan}/update', [DaftarLaporanController::class, 'update_laporan'])->name('daftar_laporan.update_laporan');
+    Route::delete('/dashboard/daftar_laporan/{laporan}/destroy', [DaftarLaporanController::class, 'destroy_laporan'])->name('daftar_laporan.destroy_laporan');
+    Route::delete('/dashboard/daftar_laporan/jenis/{jenis_laporan}/destroy', [DaftarLaporanController::class, 'destroy_jenis_laporan'])->name('daftar_laporan.destroy_jenis_laporan');
 });

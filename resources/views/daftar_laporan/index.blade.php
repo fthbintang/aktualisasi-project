@@ -36,11 +36,13 @@
                                                 <td class="text-end">
                                                     <a href="{{ route('daftar_laporan.edit_jenis_laporan', $jenis->id) }}"
                                                         class="btn btn-sm btn-warning">Edit Jenis</a>
-                                                    <form action="#" method="POST" class="d-inline"
-                                                        onsubmit="return confirm('Yakin hapus jenis laporan ini?');">
+                                                    <form
+                                                        action="{{ route('daftar_laporan.destroy_jenis_laporan', $jenis->id) }}"
+                                                        method="POST" class="d-inline">
                                                         @csrf
                                                         @method('DELETE')
-                                                        <button type="submit" class="btn btn-sm btn-danger">
+                                                        <button type="button"
+                                                            class="btn btn-sm btn-danger btn-delete-jenis-laporan">
                                                             Hapus Jenis
                                                         </button>
                                                     </form>
@@ -55,11 +57,13 @@
                                                     <td>
                                                         <a href="{{ route('daftar_laporan.edit_laporan', $laporan->id) }}"
                                                             class="btn btn-sm btn-warning">Edit</a>
-                                                        <form action="#" method="POST" class="d-inline"
-                                                            onsubmit="return confirm('Yakin hapus laporan ini?');">
+                                                        <form
+                                                            action="{{ route('daftar_laporan.destroy_laporan', $laporan->id) }}"
+                                                            method="POST" class="d-inline form-delete">
                                                             @csrf
                                                             @method('DELETE')
-                                                            <button type="submit" class="btn btn-sm btn-danger">
+                                                            <button type="button"
+                                                                class="btn btn-sm btn-danger btn-delete-laporan">
                                                                 Hapus
                                                             </button>
                                                         </form>
@@ -80,4 +84,58 @@
             </div>
         </div>
     </div>
+
+    {{-- DELETE LAPORAN --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.btn-delete-laporan');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const form = this.closest('form');
+                    Swal.fire({
+                        title: 'Yakin ingin menghapus?',
+                        text: "Data yang dihapus tidak bisa dikembalikan!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
+
+    {{-- DELETE JENIS LAPORAN --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.btn-delete-jenis-laporan');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const form = this.closest('form');
+                    Swal.fire({
+                        title: 'Yakin ingin menghapus?',
+                        text: "Jika jenis laporan dihapus, semua laporan di dalamnya juga akan terhapus!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#6c757d',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
+    </script>
 </x-layout>

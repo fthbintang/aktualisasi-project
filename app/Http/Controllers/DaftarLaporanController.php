@@ -132,4 +132,30 @@ class DaftarLaporanController extends Controller
             return back()->withInput();
         }
     }
+
+    public function destroy_laporan(Laporan $laporan)
+    {
+        try {
+            $laporan->delete();
+
+            Alert::success('Berhasil', 'Data berhasil dihapus');
+            return redirect()->route('daftar_laporan.index');
+        } catch (\Exception $e) {
+            Alert::error('Gagal', 'Terjadi kesalahan saat menghapus data');
+            return back();
+        }
+    }
+
+    public function destroy_jenis_laporan(JenisLaporan $jenis_laporan)
+    {
+        try {
+            $jenis_laporan->delete();
+
+            Alert::success('Berhasil', 'Data berhasil dihapus');
+            return redirect()->route('daftar_laporan.index');
+        } catch (\Exception $e) {
+            Alert::error('Gagal', 'Terjadi kesalahan saat menghapus data');
+            return back();
+        }
+    }
 }
