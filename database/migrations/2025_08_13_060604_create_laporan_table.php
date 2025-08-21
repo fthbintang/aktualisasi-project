@@ -15,6 +15,7 @@ return new class extends Migration
             $table->id();
             $table->foreignId('jenis_laporan_id')->constrained('jenis_laporan')->onDelete('cascade');
             $table->string('nama_laporan');
+            $table->boolean('is_hidden')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });
