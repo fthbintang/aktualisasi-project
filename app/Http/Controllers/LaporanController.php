@@ -2,10 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Laporan;
 use App\Models\JenisLaporan;
 use App\Models\LaporanTahun;
 use Illuminate\Http\Request;
+use App\Models\UploadLaporan;
 use App\Http\Controllers\Controller;
+use RealRashid\SweetAlert\Facades\Alert;
 
 class LaporanController extends Controller
 {
@@ -41,16 +44,47 @@ class LaporanController extends Controller
         ]);
     }
 
-    public function toggle($laporanId, $tahun)
+    public function create(Request $request)
     {
-        $laporanTahun = LaporanTahun::firstOrCreate(
-            ['laporan_id' => $laporanId, 'tahun' => $tahun],
-            ['is_hidden' => 0]
-        );
+        $tahun = $request->input('tahun', date('Y'));
+        $laporan = Laporan::all(); // ambil semua laporan
+        $laporanTahun = LaporanTahun::where('tahun', $tahun)->get();
 
-        $laporanTahun->is_hidden = !$laporanTahun->is_hidden;
-        $laporanTahun->save();
-
-        return back()->with('success', 'Status laporan berhasil diperbarui');
+        return view('laporan.create_laporan_tahun', [
+            'breadcrumbs' => ['Laporan', 'Tambah Laporan'],
+            'tahun' => $tahun,
+            'laporan' => $laporan,
+            'laporanTahun' => $laporanTahun
+        ]);
     }
+
+    public function store(Request $request)
+    {
+        $request->validate([
+            'laporan_id' => 'required|array',
+            'laporan_id.*' => 'exists:laporan,id',
+            'tahun' => 'required|digits:4',
+        ]);
+
+        foreach ($request->laporan_id as $laporanId) {
+            LaporanTahun::firstOrCreate([
+                'laporan_id' => $laporanId,
+                'tahun' => $request->tahun,
+            ]);
+        }
+
+        Alert::success('Sukses!', 'Laporan berhasil ditambahkan untuk tahun '.$request->tahun);
+        return redirect()->route('laporan.index', ['tahun' => $request->tahun]);
+    }
+
+    public function destroy($laporanId, $tahun)
+    {
+        LaporanTahun::where('laporan_id', $laporanId)
+                    ->where('tahun', $tahun)
+                    ->delete();
+
+        Alert::success('Sukses!', 'Data berhasil dihapus.');
+        return redirect()->route('laporan.index', ['tahun' => $tahun]);
+    }
+    
 }

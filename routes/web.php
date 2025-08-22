@@ -27,7 +27,10 @@ Route::middleware('auth')->group(function () {
     // LAPORAN
     Route::get('/dashboard/laporan', [LaporanController::class, 'index'])->name('laporan.index');
     Route::patch('/dashboard/laporan/{id}/toggle', [LaporanController::class, 'toggle'])->name('laporan.toggle');
-
+    
+    Route::get('/dashboard/laporan/laporan_tahun/create', [LaporanController::class, 'create'])->name('laporan_tahun.create');
+    Route::post('/dashboard/laporan/laporan_tahun/store', [LaporanController::class, 'store'])->name('laporan_tahun.store');
+    Route::delete('/dashboard/laporan/laporan_tahun/{laporan}/{tahun}', [LaporanController::class, 'destroy'])->name('laporan_tahun.destroy');
 
     // DAFTAR LAPORAN
     Route::get('/dashboard/daftar_laporan', [DaftarLaporanController::class, 'index'])->name('daftar_laporan.index');

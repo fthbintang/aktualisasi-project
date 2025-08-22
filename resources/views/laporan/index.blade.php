@@ -18,13 +18,11 @@
                 </form>
 
                 {{-- Tombol tambah laporan --}}
-                {{-- <a href="{{ route('laporan_tahun.create', ['tahun' => $tahun]) }}" class="btn btn-primary"> --}}
-                <a href="#" class="btn btn-primary">
+                <a href="{{ route('laporan_tahun.create', ['tahun' => $tahun]) }}" class="btn btn-primary">
                     Tambah Laporan Tahun Ini
                 </a>
             </div>
         </div>
-
 
         {{-- Tabel Laporan --}}
         <div class="card mb-4">
@@ -55,17 +53,16 @@
                                             12 => 'Desember',
                                         ];
                                     @endphp
-
                                     @foreach (range(1, 12) as $month)
                                         <th class="text-center">{{ $bulanIndo[$month] }}</th>
                                     @endforeach
-
+                                    <th class="text-center">#</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($laporanGrouped as $jenisId => $laporanGroup)
                                     <tr class="table-active">
-                                        <th colspan="{{ $colspan }}">
+                                        <th colspan="{{ $colspan + 1 }}">
                                             {{ optional($jenisLaporan->firstWhere('id', $jenisId))->nama_jenis ?? 'Tanpa Jenis' }}
                                         </th>
                                     </tr>
@@ -75,7 +72,7 @@
                                             <td>{{ $laporan->nama_laporan }}</td>
 
                                             {{-- Kolom Bulan --}}
-                                            @foreach (range(1, 12) as $month)
+                                            {{-- @foreach (range(1, 12) as $month)
                                                 @php $uploaded = $lt->upload_laporan->firstWhere('bulan', $month); @endphp
                                                 <td class="text-center">
                                                     @if ($uploaded)
@@ -95,7 +92,108 @@
                                                         </form>
                                                     @endif
                                                 </td>
+                                            @endforeach --}}
+
+                                            @foreach (range(1, 12) as $month)
+                                                @php $uploaded = $lt->upload_laporan->firstWhere('bulan', $month); @endphp
+                                                <td class="text-center">
+                                                    @if ($uploaded)
+                                                        <!-- Ikon centang bisa diklik untuk buka modal -->
+                                                        <span class="bg-success text-white px-2 py-1 rounded"
+                                                            style="cursor:pointer;" data-bs-toggle="modal"
+                                                            data-bs-target="#modalLaporan-{{ $laporan->id }}-{{ $month }}">
+                                                            ✔
+                                                        </span>
+
+                                                        <!-- Modal -->
+                                                        <div class="modal fade"
+                                                            id="modalLaporan-{{ $laporan->id }}-{{ $month }}"
+                                                            tabindex="-1"
+                                                            aria-labelledby="modalLabel-{{ $laporan->id }}-{{ $month }}"
+                                                            aria-hidden="true">
+                                                            <div class="modal-dialog modal-dialog-centered">
+                                                                <div class="modal-content">
+                                                                    <div class="modal-header">
+                                                                        <h5 class="modal-title"
+                                                                            id="modalLabel-{{ $laporan->id }}-{{ $month }}">
+                                                                            Aksi Laporan Bulan {{ $month }}
+                                                                        </h5>
+                                                                        <button type="button" class="btn-close"
+                                                                            data-bs-dismiss="modal"
+                                                                            aria-label="Tutup"></button>
+                                                                    </div>
+                                                                    <div class="modal-body text-center">
+                                                                        <!-- Tombol Preview -->
+                                                                        <a href="#" target="_blank"
+                                                                            class="btn btn-primary w-100 mb-2">
+                                                                            Preview Laporan
+                                                                        </a>
+
+                                                                        <!-- Tombol Edit -->
+                                                                        <form action="#" method="POST"
+                                                                            enctype="multipart/form-data"
+                                                                            class="w-100 mb-2">
+                                                                            @csrf
+                                                                            @method('PUT')
+                                                                            <input type="file" name="file_laporan"
+                                                                                style="display:none"
+                                                                                onchange="this.form.submit()"
+                                                                                id="file-edit-{{ $laporan->id }}-{{ $month }}">
+                                                                            <button type="button"
+                                                                                class="btn btn-warning w-100"
+                                                                                onclick="document.getElementById('file-edit-{{ $laporan->id }}-{{ $month }}').click()">
+                                                                                Edit Unggahan
+                                                                            </button>
+                                                                        </form>
+
+                                                                        <!-- Tombol Hapus -->
+                                                                        <form action="#" method="POST"
+                                                                            class="w-100">
+                                                                            @csrf
+                                                                            @method('DELETE')
+                                                                            <button type="submit"
+                                                                                class="btn btn-danger w-100"
+                                                                                onclick="return confirm('Yakin ingin menghapus laporan bulan ini?')">
+                                                                                Hapus Unggahan
+                                                                            </button>
+                                                                        </form>
+                                                                    </div>
+                                                                </div>
+                                                            </div>
+                                                        </div>
+                                                    @else
+                                                        <!-- Jika belum ada upload -->
+                                                        <form action="#" method="POST"
+                                                            enctype="multipart/form-data" class="preserve-anchor"
+                                                            data-anchor="row-laporan-{{ $laporan->id }}">
+                                                            @csrf
+                                                            <input type="hidden" name="bulan"
+                                                                value="{{ $month }}">
+                                                            <input type="hidden" name="laporan_tahun_id"
+                                                                value="{{ $lt->id }}">
+                                                            <input type="file" name="file_laporan"
+                                                                style="display:none" onchange="this.form.submit()"
+                                                                id="file-upload-{{ $laporan->id }}-{{ $month }}">
+                                                            <span class="text-danger fw-bold" style="cursor:pointer;"
+                                                                onclick="document.getElementById('file-upload-{{ $laporan->id }}-{{ $month }}').click()">–</span>
+                                                        </form>
+                                                    @endif
+                                                </td>
                                             @endforeach
+
+
+                                            {{-- Kolom Hapus --}}
+                                            <td class="text-center">
+                                                <form
+                                                    action="{{ route('laporan_tahun.destroy', [$laporan->id, $tahun]) }}"
+                                                    method="POST" class="d-inline form-delete">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="button" class="btn btn-danger btn-sm btn-delete">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </td>
                                         </tr>
                                     @endforeach
                                 @endforeach
@@ -143,5 +241,34 @@
                 }
             });
         })();
+    </script>
+
+    {{-- SCRIPT DELETE --}}
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const deleteButtons = document.querySelectorAll('.btn-delete');
+
+            deleteButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    const form = this.closest('form');
+
+                    Swal.fire({
+                        title: 'Apakah Anda yakin?',
+                        text: "Data ini akan dihapus permanen!",
+                        icon: 'warning',
+                        showCancelButton: true,
+                        confirmButtonColor: '#d33',
+                        cancelButtonColor: '#3085d6',
+                        confirmButtonText: 'Ya, hapus!',
+                        cancelButtonText: 'Batal'
+                    }).then((result) => {
+                        if (result.isConfirmed) {
+                            form.submit();
+                        }
+                    });
+                });
+            });
+        });
     </script>
 </x-layout>
