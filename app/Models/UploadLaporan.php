@@ -13,8 +13,10 @@ class UploadLaporan extends Model
     protected $table = 'upload_laporan';
     protected $guarded = ['id'];
 
-    public function laporan()
+    // Relasi: Upload Laporan milik Laporan Tahun
+    public function laporan_tahun()
     {
-        return $this->belongsTo(Laporan::class);
+        return $this->belongsTo(LaporanTahun::class);
     }
+
 }

@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::create('upload_laporan', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('laporan_id')->constrained('laporan')->onDelete('cascade');
-            $table->year('tahun');
+            $table->foreignId('laporan_tahun_id')->constrained('laporan_tahun')->onDelete('cascade');
             $table->unsignedTinyInteger('bulan');
             $table->string('laporan_path');
             $table->timestamps();

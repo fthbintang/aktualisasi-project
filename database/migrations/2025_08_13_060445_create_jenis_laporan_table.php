@@ -14,7 +14,6 @@ return new class extends Migration
         Schema::create('jenis_laporan', function (Blueprint $table) {
             $table->id();
             $table->string('nama_jenis');
-            $table->boolean('is_hidden')->default(false);
             $table->timestamps();
             $table->softDeletes();
         });

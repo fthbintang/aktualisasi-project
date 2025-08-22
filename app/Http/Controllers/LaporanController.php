@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Laporan;
 use App\Models\JenisLaporan;
+use App\Models\LaporanTahun;
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
 
@@ -11,42 +11,46 @@ class LaporanController extends Controller
 {
     public function index(Request $request)
     {
-        $jenisLaporan = JenisLaporan::where('is_hidden', 0)->get();
+        $jenisLaporan = JenisLaporan::all();
         $tahun = $request->input('tahun', date('Y'));
         $filterJenis = $request->input('jenis', []);
 
-        $query = Laporan::with(['upload_laporan' => function ($q) use ($tahun) {
-            $q->where('tahun', $tahun);
-        }, 'jenis_laporan' => function ($q) {
-            $q->where('is_hidden', 0);
-        }]);
+        // Ambil laporan_tahun (hanya tahun terpilih)
+        $query = LaporanTahun::with([
+            'laporan.jenis_laporan',
+            'upload_laporan'
+        ])->where('tahun', $tahun);
 
         if (!empty($filterJenis)) {
-            $query->whereIn('jenis_laporan_id', $filterJenis);
+            $query->whereHas('laporan', function ($q) use ($filterJenis) {
+                $q->whereIn('jenis_laporan_id', $filterJenis);
+            });
         }
 
-        $dataLaporan = $query->get();
+        $dataLaporanTahun = $query->get();
 
-        // Pisahkan laporan visible dan hidden
-        $laporanVisible = $dataLaporan->where('is_hidden', 0)->groupBy('jenis_laporan_id');
-        $laporanHidden  = $dataLaporan->where('is_hidden', 1)->groupBy('jenis_laporan_id');
+        // Langsung group by jenis
+        $laporanGrouped = $dataLaporanTahun
+            ->groupBy(fn($lt) => $lt->laporan->jenis_laporan_id);
 
         return view('laporan.index', [
-            'breadcrumbs'    => ['Laporan'],
-            'jenisLaporan'   => $jenisLaporan,
-            'laporanVisible' => $laporanVisible,
-            'laporanHidden'  => $laporanHidden,
-            'tahun'          => $tahun,
+            'breadcrumbs'   => ['Laporan'],
+            'jenisLaporan'  => $jenisLaporan,
+            'laporanGrouped'=> $laporanGrouped,
+            'tahun'         => $tahun,
         ]);
     }
 
-    public function toggle($id)
+    public function toggle($laporanId, $tahun)
     {
-        $laporan = Laporan::findOrFail($id);
-        $laporan->is_hidden = !$laporan->is_hidden;
-        $laporan->save();
+        $laporanTahun = LaporanTahun::firstOrCreate(
+            ['laporan_id' => $laporanId, 'tahun' => $tahun],
+            ['is_hidden' => 0]
+        );
+
+        $laporanTahun->is_hidden = !$laporanTahun->is_hidden;
+        $laporanTahun->save();
 
         return back()->with('success', 'Status laporan berhasil diperbarui');
     }
-
 }

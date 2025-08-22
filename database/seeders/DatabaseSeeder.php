@@ -6,6 +6,7 @@ use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Laporan;
 use App\Models\JenisLaporan;
+use App\Models\LaporanTahun;
 use App\Models\UploadLaporan;
 use Illuminate\Database\Seeder;
 
@@ -18,6 +19,7 @@ class DatabaseSeeder extends Seeder
     {
         // User::factory(10)->create();
 
+        // 1. Buat user
         User::create([
             'nama_lengkap' => 'Muhammad Bintang Fathehah',
             'role' => 'Kepaniteraan Hukum',
@@ -25,7 +27,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('bintang')
         ]);
 
-        // 1. Buat jenis laporan
+        // 2. Buat jenis laporan
         $jenisLaporans = [
             'Laporan Offline',
             'Laporan Online',
@@ -37,20 +39,26 @@ class DatabaseSeeder extends Seeder
                 'nama_jenis' => $jenis
             ]);
 
-            // 2. Buat laporan untuk jenis ini (5 laporan tiap jenis)
+            // 3. Buat laporan untuk jenis ini (5 laporan tiap jenis)
             for ($i = 1; $i <= 5; $i++) {
                 $laporanModel = Laporan::factory()->create([
                     'jenis_laporan_id' => $jenisModel->id,
                     'nama_laporan' => $jenis . ' - Laporan ' . $i
                 ]);
 
-                // 3. Buat upload laporan random untuk setiap bulan di tahun ini
+                // 4. Buat laporan_tahun untuk tahun ini
+                $laporanTahun = LaporanTahun::factory()->create([
+                    'laporan_id' => $laporanModel->id,
+                    'tahun' => date('Y'),
+                ]);
+
+                // 5. Buat upload_laporan random untuk tiap bulan
                 for ($bulan = 1; $bulan <= 12; $bulan++) {
-                    if (rand(0, 1)) { // 50% chance laporan sudah diupload
+                    if (rand(0,1)) { // 50% chance sudah diupload
                         UploadLaporan::factory()->create([
-                            'laporan_id' => $laporanModel->id,
-                            'tahun' => date('Y'),
-                            'bulan' => $bulan
+                            'laporan_tahun_id' => $laporanTahun->id,
+                            'bulan' => $bulan,
+                            'laporan_path' => 'laporan/' . $laporanModel->id . '/file_' . $bulan . '.pdf'
                         ]);
                     }
                 }

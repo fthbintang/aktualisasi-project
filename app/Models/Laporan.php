@@ -16,13 +16,15 @@ class Laporan extends Model
     protected $table = 'laporan';
     protected $guarded = ['id'];
 
+    // Relasi: Laporan milik Jenis Laporan
     public function jenis_laporan()
     {
         return $this->belongsTo(JenisLaporan::class);
     }
 
-    public function upload_laporan()
+    // Relasi: Laporan memiliki banyak Laporan Tahun
+    public function laporan_tahun()
     {
-        return $this->hasMany(UploadLaporan::class);
+        return $this->hasMany(LaporanTahun::class);
     }
 }

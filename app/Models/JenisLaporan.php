@@ -16,6 +16,7 @@ class JenisLaporan extends Model
     protected $table = 'jenis_laporan';
     protected $guarded = ['id'];
 
+    // Relasi: Jenis Laporan memiliki banyak Laporan
     public function laporan(): HasMany
     {
         return $this->hasMany(Laporan::class);

@@ -3,6 +3,7 @@
 namespace Database\Factories;
 
 use App\Models\Laporan;
+use App\Models\LaporanTahun;
 use App\Models\UploadLaporan;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
@@ -18,11 +19,10 @@ class UploadLaporanFactory extends Factory
      */
     protected $model = UploadLaporan::class;
 
-    public function definition()
+    public function definition(): array
     {
         return [
-            'laporan_id' => Laporan::factory(), // Bisa buat laporan baru otomatis
-            'tahun' => $this->faker->year,
+            'laporan_tahun_id' => LaporanTahun::factory(),
             'bulan' => $this->faker->numberBetween(1, 12),
             'laporan_path' => 'laporan/' . $this->faker->unique()->word . '.pdf',
         ];
