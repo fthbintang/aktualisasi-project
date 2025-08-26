@@ -72,28 +72,6 @@
                                             <td>{{ $laporan->nama_laporan }}</td>
 
                                             {{-- Kolom Bulan --}}
-                                            {{-- @foreach (range(1, 12) as $month)
-                                                @php $uploaded = $lt->upload_laporan->firstWhere('bulan', $month); @endphp
-                                                <td class="text-center">
-                                                    @if ($uploaded)
-                                                        <span class="bg-success text-white px-2 py-1 rounded">✔</span>
-                                                    @else
-                                                        <form action="#" method="POST"
-                                                            enctype="multipart/form-data" class="preserve-anchor"
-                                                            data-anchor="row-laporan-{{ $laporan->id }}">
-                                                            @csrf
-                                                            <input type="hidden" name="bulan"
-                                                                value="{{ $month }}">
-                                                            <input type="file" name="file_laporan"
-                                                                style="display:none" onchange="this.form.submit()"
-                                                                id="file-upload-{{ $laporan->id }}-{{ $month }}">
-                                                            <span class="text-danger fw-bold" style="cursor:pointer;"
-                                                                onclick="document.getElementById('file-upload-{{ $laporan->id }}-{{ $month }}').click()">–</span>
-                                                        </form>
-                                                    @endif
-                                                </td>
-                                            @endforeach --}}
-
                                             @foreach (range(1, 12) as $month)
                                                 @php $uploaded = $lt->upload_laporan->firstWhere('bulan', $month); @endphp
                                                 <td class="text-center">
@@ -123,15 +101,26 @@
                                                                             aria-label="Tutup"></button>
                                                                     </div>
                                                                     <div class="modal-body text-center">
-                                                                        <!-- Tombol Preview -->
-                                                                        <a href="#" target="_blank"
-                                                                            class="btn btn-primary w-100 mb-2">
-                                                                            Preview Laporan
-                                                                        </a>
+                                                                        @php
+                                                                            $uploaded = $lt->upload_laporan->firstWhere(
+                                                                                'bulan',
+                                                                                $month,
+                                                                            );
+                                                                        @endphp
+
+                                                                        @if ($uploaded)
+                                                                            <!-- Tombol Preview -->
+                                                                            <a href="{{ asset('storage/' . $uploaded->laporan_path) }}"
+                                                                                target="_blank"
+                                                                                class="btn btn-primary w-100 mb-2">
+                                                                                Preview Laporan
+                                                                            </a>
+                                                                        @endif
 
                                                                         <!-- Tombol Edit -->
-                                                                        <form action="#" method="POST"
-                                                                            enctype="multipart/form-data"
+                                                                        <form
+                                                                            action="{{ route('upload_laporan.update', $uploaded->id) }}"
+                                                                            method="POST" enctype="multipart/form-data"
                                                                             class="w-100 mb-2">
                                                                             @csrf
                                                                             @method('PUT')
@@ -147,24 +136,26 @@
                                                                         </form>
 
                                                                         <!-- Tombol Hapus -->
-                                                                        <form action="#" method="POST"
-                                                                            class="w-100">
+                                                                        <form
+                                                                            action="{{ route('upload_laporan.delete', $uploaded->id) }}"
+                                                                            method="POST" class="w-100 form-delete">
                                                                             @csrf
                                                                             @method('DELETE')
-                                                                            <button type="submit"
-                                                                                class="btn btn-danger w-100"
-                                                                                onclick="return confirm('Yakin ingin menghapus laporan bulan ini?')">
+                                                                            <button type="button"
+                                                                                class="btn btn-danger w-100 btn-delete">
                                                                                 Hapus Unggahan
                                                                             </button>
                                                                         </form>
+
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     @else
                                                         <!-- Jika belum ada upload -->
-                                                        <form action="#" method="POST"
-                                                            enctype="multipart/form-data" class="preserve-anchor"
+                                                        <form action="{{ route('upload_laporan.store') }}"
+                                                            method="POST" enctype="multipart/form-data"
+                                                            class="preserve-anchor"
                                                             data-anchor="row-laporan-{{ $laporan->id }}">
                                                             @csrf
                                                             <input type="hidden" name="bulan"
@@ -180,7 +171,6 @@
                                                     @endif
                                                 </td>
                                             @endforeach
-
 
                                             {{-- Kolom Hapus --}}
                                             <td class="text-center">
