@@ -7,7 +7,7 @@
             <h6>{{ end($breadcrumbs) }}</h6>
         </div>
         <div class="card-body">
-            <form action="#" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('arsip_permohonan.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <!-- No Berkas Terstruktur -->
@@ -38,8 +38,9 @@
 
                         <!-- Preview Format -->
                         <div class="col-6">
-                            <input type="text" id="no_berkas_preview" class="form-control" name="no_berkas" disabled
-                                value="{{ old('no_berkas_preview', '') }}">
+                            <input type="text" id="no_berkas_preview" class="form-control" disabled>
+                            <!-- Hidden input untuk dikirim ke server -->
+                            <input type="hidden" name="no_berkas" id="no_berkas_hidden" value="{{ old('no_berkas') }}">
                         </div>
                     </div>
                 </div>
@@ -78,26 +79,14 @@
                     @enderror
                 </div>
 
-                <!-- Foto Cover -->
+                <!-- File Arsip -->
                 <div class="mb-3">
-                    <label for="foto_cover" class="form-label">
-                        <b>Foto Cover</b><span class="text-danger">*</span>
+                    <label for="arsip_permohonan" class="form-label">
+                        <b>File Arsip</b><span class="text-danger">*</span>
                     </label>
-                    <input type="file" name="foto_cover" id="foto_cover"
-                        class="form-control @error('foto_cover') is-invalid @enderror" required>
-                    @error('foto_cover')
-                        <div class="invalid-feedback">{{ $message }}</div>
-                    @enderror
-                </div>
-
-                <!-- Foto Checklist -->
-                <div class="mb-3">
-                    <label for="foto_checklist" class="form-label">
-                        <b>Foto Checklist</b><span class="text-danger">*</span>
-                    </label>
-                    <input type="file" name="foto_checklist" id="foto_checklist"
-                        class="form-control @error('foto_checklist') is-invalid @enderror" required>
-                    @error('foto_checklist')
+                    <input type="file" name="arsip_permohonan" id="arsip_permohonan"
+                        class="form-control @error('arsip_permohonan') is-invalid @enderror" required>
+                    @error('arsip_permohonan')
                         <div class="invalid-feedback">{{ $message }}</div>
                     @enderror
                 </div>
@@ -113,6 +102,7 @@
             const tahun = document.getElementById('tahun_berkas').value || '';
             const preview = nomor && tahun ? `${nomor}.Pdt.G.${tahun}.PN Kmn` : '';
             document.getElementById('no_berkas_preview').value = preview;
+            document.getElementById('no_berkas_hidden').value = preview;
         }
 
         document.getElementById('no_urut').addEventListener('input', updateNoBerkasPreview);

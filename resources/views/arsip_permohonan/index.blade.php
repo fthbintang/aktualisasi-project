@@ -29,10 +29,7 @@
                                             Bulan</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Foto Cover</th>
-                                        <th
-                                            class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
-                                            Foto Checklist</th>
+                                            File</th>
                                         <th
                                             class="text-center text-uppercase text-secondary text-xxs font-weight-bolder opacity-7">
                                             Aksi</th>
@@ -41,40 +38,48 @@
                                 <tbody>
                                     @foreach ($arsip_permohonan as $row)
                                         <tr>
-                                            <td>
-                                                <div class="text-center text-xs font-weight-bold mb-0">
-                                                    {{ $loop->iteration }}</div>
+                                            <td class="text-center">{{ $loop->iteration }}</td>
+                                            <td class="text-center">{{ $row->no_berkas }}</td>
+                                            <td class="text-center">{{ $row->bulan }}</td>
+
+                                            <!-- File -->
+                                            <td class="text-center">
+                                                @if ($row->arsip_permohonan_path)
+                                                    @php
+                                                        $ext = pathinfo(
+                                                            $row->arsip_permohonan_path,
+                                                            PATHINFO_EXTENSION,
+                                                        );
+                                                        $isImage = in_array(strtolower($ext), [
+                                                            'jpg',
+                                                            'jpeg',
+                                                            'png',
+                                                            'gif',
+                                                        ]);
+                                                    @endphp
+
+                                                    @if ($isImage)
+                                                        <img src="{{ asset('storage/' . $row->arsip_permohonan_path) }}"
+                                                            alt="File" class="img-thumbnail"
+                                                            style="width:50px; cursor:pointer;"
+                                                            onclick="previewFile('{{ asset('storage/' . $row->arsip_permohonan_path) }}')">
+                                                    @else
+                                                        <a href="{{ asset('storage/' . $row->arsip_permohonan_path) }}"
+                                                            target="_blank">
+                                                            {{ basename($row->arsip_permohonan_path) }}
+                                                        </a>
+                                                    @endif
+                                                @endif
                                             </td>
-                                            <td>
-                                                <p class="text-center text-xs font-weight-bold mb-0">
-                                                    {{ $row->no_berkas }}</p>
-                                            </td>
-                                            <td>
-                                                <p class="text-center text-xs font-weight-bold mb-0">{{ $row->bulan }}
-                                                </p>
-                                            </td>
-                                            <td>
-                                                <p class="text-center text-xs font-weight-bold mb-0">
-                                                    {{ $row->foto_cover }}
-                                                </p>
-                                            </td>
-                                            <td>
-                                                <p class="text-center text-xs font-weight-bold mb-0">
-                                                    {{ $row->foto_checklist }}
-                                                </p>
-                                            </td>
-                                            <td class="text-center text-xs font-weight-bold mb-0">
-                                                <a href="#" class="text-warning font-weight-bold text-xs">
-                                                    Edit
-                                                </a>
+
+                                            <td class="text-center">
+                                                <a href="#" class="text-warning font-weight-bold text-xs">Edit</a>
                                                 |
                                                 <form action="#" method="POST" class="d-inline form-delete">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button"
-                                                        class="btn btn-link p-0 m-0 text-danger text-xs btn-delete">
-                                                        Hapus
-                                                    </button>
+                                                        class="btn btn-link p-0 m-0 text-danger text-xs btn-delete">Hapus</button>
                                                 </form>
                                             </td>
                                         </tr>
@@ -88,11 +93,25 @@
         </div>
     </div>
 
-    {{-- DELETE --}}
+    <!-- Modal Preview -->
+    <div class="modal fade" id="filePreviewModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+            <div class="modal-content">
+                <div class="modal-body p-0 text-center">
+                    <img src="" id="previewFileSrc" class="img-fluid" alt="Preview File">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" data-bs-dismiss="modal">Tutup</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    {{-- DELETE & PREVIEW --}}
     <script>
+        // Hapus
         document.addEventListener('DOMContentLoaded', function() {
             const deleteButtons = document.querySelectorAll('.btn-delete');
-
             deleteButtons.forEach(button => {
                 button.addEventListener('click', function() {
                     const form = this.closest('form');
@@ -113,5 +132,12 @@
                 });
             });
         });
+
+        // Preview gambar
+        function previewFile(src) {
+            document.getElementById('previewFileSrc').src = src;
+            const myModal = new bootstrap.Modal(document.getElementById('filePreviewModal'));
+            myModal.show();
+        }
     </script>
 </x-layout>

@@ -15,8 +15,7 @@ return new class extends Migration
             $table->id();
             $table->string('no_berkas')->unique();
             $table->string('bulan');
-            $table->string('foto_cover');
-            $table->string('foto_checklist');
+            $table->string('arsip_permohonan_path');
             $table->timestamps();
             $table->softDeletes();
         });
