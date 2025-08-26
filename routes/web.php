@@ -52,4 +52,5 @@ Route::middleware('auth')->group(function () {
 
     // ARSIP PERMOHONAN
     Route::get('/dashboard/arsip_permohonan', [ArsipPermohonanController::class, 'index'])->name('arsip_permohonan.index');
+    Route::get('/dashboard/arsip_permohonan/create', [ArsipPermohonanController::class, 'create'])->name('arsip_permohonan.create');
 });

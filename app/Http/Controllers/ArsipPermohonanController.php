@@ -14,4 +14,11 @@ class ArsipPermohonanController extends Controller
             'arsip_permohonan' => ArsipPermohonan::all()
         ]);
     }
+
+    public function create()
+    {
+        return view('arsip_permohonan.create', [
+            'breadcrumbs' => ['Arsip Permohonan', 'Tambah Arsip Permohonan']
+        ]);
+    }
 }

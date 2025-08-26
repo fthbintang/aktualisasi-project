@@ -9,7 +9,7 @@
                                 <h6>Data {{ end($breadcrumbs) }}</h6>
                             </div>
                             <div class="col-sm-4 d-flex justify-content-end">
-                                <a href="#" class="btn btn-success">Tambah Data</a>
+                                <a href="{{ route('arsip_permohonan.create') }}" class="btn btn-success">Tambah Data</a>
                             </div>
                         </div>
                     </div>

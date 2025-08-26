@@ -13,7 +13,7 @@ return new class extends Migration
     {
         Schema::create('arsip_permohonan', function (Blueprint $table) {
             $table->id();
-            $table->string('no_berkas');
+            $table->string('no_berkas')->unique();
             $table->string('bulan');
             $table->string('foto_cover');
             $table->string('foto_checklist');
