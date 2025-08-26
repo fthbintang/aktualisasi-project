@@ -1,0 +1,32 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    /**
+     * Run the migrations.
+     */
+    public function up(): void
+    {
+        Schema::create('arsip_permohonan', function (Blueprint $table) {
+            $table->id();
+            $table->string('no_berkas');
+            $table->string('bulan');
+            $table->string('foto_cover');
+            $table->string('foto_checklist');
+            $table->timestamps();
+            $table->softDeletes();
+        });
+    }
+
+    /**
+     * Reverse the migrations.
+     */
+    public function down(): void
+    {
+        Schema::dropIfExists('arsip_permohonan');
+    }
+};

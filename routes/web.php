@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArsipPermohonanController;
 use App\Http\Controllers\DaftarLaporanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
@@ -48,4 +49,7 @@ Route::middleware('auth')->group(function () {
     Route::put('/dashboard/daftar_laporan/edit_laporan/{laporan}/update', [DaftarLaporanController::class, 'update_laporan'])->name('daftar_laporan.update_laporan');
     Route::delete('/dashboard/daftar_laporan/{laporan}/destroy', [DaftarLaporanController::class, 'destroy_laporan'])->name('daftar_laporan.destroy_laporan');
     Route::delete('/dashboard/daftar_laporan/jenis/{jenis_laporan}/destroy', [DaftarLaporanController::class, 'destroy_jenis_laporan'])->name('daftar_laporan.destroy_jenis_laporan');
+
+    // ARSIP PERMOHONAN
+    Route::get('/dashboard/arsip_permohonan', [ArsipPermohonanController::class, 'index'])->name('arsip_permohonan.index');
 });
