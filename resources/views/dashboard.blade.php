@@ -37,7 +37,7 @@
                                         Permohonan Bulan Ini
                                     </p>
                                     <h5 class="font-weight-bolder">
-                                        5
+                                        5 Permohonan
                                     </h5>
                                 </div>
                             </div>
@@ -61,7 +61,7 @@
                         <div class="col-8">
                             <div class="numbers">
                                 <p class="mb-0 text-uppercase font-weight-bold" style="font-size: 0.75rem;">Minutasi
-                                    Perkara Perdata
+                                    Perkara Gugatan
                                     Bulan Ini
                                 </p>
                                 <h5 class="font-weight-bolder">
@@ -164,7 +164,7 @@
         </div>
     </div>
 
-    <div class="row mt-4">
+    {{-- <div class="row mt-4">
         <div class="container-fluid">
             <div class="row">
                 <div class="col-12">
@@ -794,7 +794,7 @@
                 </div>
             </div>
         </div>
-    </div>
+    </div> --}}
 
 </x-layout>
 

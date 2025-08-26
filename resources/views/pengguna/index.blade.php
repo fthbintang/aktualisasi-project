@@ -74,6 +74,7 @@
         </div>
     </div>
 
+    {{-- DELETE --}}
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const deleteButtons = document.querySelectorAll('.btn-delete');

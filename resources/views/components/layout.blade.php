@@ -20,6 +20,17 @@
     <script src="https://kit.fontawesome.com/42d5adcbca.js" crossorigin="anonymous"></script>
     <!-- CSS Files -->
     <link id="pagestyle" href="/assets/css/argon-dashboard.css?v=2.1.0" rel="stylesheet" />
+
+    {{-- BOOTSTRAP ICONS --}}
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css">
+
+
+    {{-- <style>
+        * {
+            border: 1px solid red;
+        }
+    </style> --}}
+
 </head>
 
 <body class="g-sidenav-show   bg-gray-100">
