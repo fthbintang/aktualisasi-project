@@ -54,4 +54,6 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/arsip_permohonan', [ArsipPermohonanController::class, 'index'])->name('arsip_permohonan.index');
     Route::get('/dashboard/arsip_permohonan/create', [ArsipPermohonanController::class, 'create'])->name('arsip_permohonan.create');
     Route::post('/dashboard/arsip_permohonan/store', [ArsipPermohonanController::class, 'store'])->name('arsip_permohonan.store');
+    Route::get('/dashboard/arsip_permohonan/edit/{arsip_permohonan}', [ArsipPermohonanController::class, 'edit'])->name('arsip_permohonan.edit');
+    Route::put('/dashboard/arsip_permohonan/update/{arsip_permohonan}', [ArsipPermohonanController::class, 'update'])->name('arsip_permohonan.update');
 });

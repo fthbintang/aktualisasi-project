@@ -73,7 +73,8 @@
                                             </td>
 
                                             <td class="text-center">
-                                                <a href="#" class="text-warning font-weight-bold text-xs">Edit</a>
+                                                <a href="{{ route('arsip_permohonan.edit', $row->id) }}"
+                                                    class="text-warning font-weight-bold text-xs">Edit</a>
                                                 |
                                                 <form action="#" method="POST" class="d-inline form-delete">
                                                     @csrf
