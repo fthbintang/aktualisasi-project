@@ -51,6 +51,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/dashboard/daftar_laporan/jenis/{jenis_laporan}/destroy', [DaftarLaporanController::class, 'destroy_jenis_laporan'])->name('daftar_laporan.destroy_jenis_laporan');
 
     // ARSIP PERMOHONAN
+    Route::get('/arsip-permohonan/data', [ArsipPermohonanController::class, 'getData'])->name('arsip_permohonan.data');
+
     Route::get('/dashboard/arsip_permohonan', [ArsipPermohonanController::class, 'index'])->name('arsip_permohonan.index');
     Route::get('/dashboard/arsip_permohonan/create', [ArsipPermohonanController::class, 'create'])->name('arsip_permohonan.create');
     Route::post('/dashboard/arsip_permohonan/store', [ArsipPermohonanController::class, 'store'])->name('arsip_permohonan.store');
