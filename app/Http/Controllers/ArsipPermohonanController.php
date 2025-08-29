@@ -129,5 +129,28 @@ class ArsipPermohonanController extends Controller
         }
     }
 
+    public function destroy(ArsipPermohonan $arsip_permohonan)
+    {
+        try {
+            // Hapus file PDF dari storage jika ada
+            if ($arsip_permohonan->arsip_permohonan_path && Storage::disk('public')->exists($arsip_permohonan->arsip_permohonan_path)) {
+                Storage::disk('public')->delete($arsip_permohonan->arsip_permohonan_path);
+            }
+
+            // Hapus data dari database
+            $arsip_permohonan->delete();
+
+            Alert::success('Sukses!', 'Arsip permohonan berhasil dihapus.');
+            return redirect()->route('arsip_permohonan.index');
+
+        } catch (\Exception $e) {
+            Log::error('Gagal menghapus arsip permohonan', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            Alert::error('Gagal!', 'Terjadi kesalahan saat menghapus arsip: ' . $e->getMessage());
+            return back();
+        }
+    }
 
 }

@@ -56,4 +56,5 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/arsip_permohonan/store', [ArsipPermohonanController::class, 'store'])->name('arsip_permohonan.store');
     Route::get('/dashboard/arsip_permohonan/edit/{arsip_permohonan}', [ArsipPermohonanController::class, 'edit'])->name('arsip_permohonan.edit');
     Route::put('/dashboard/arsip_permohonan/update/{arsip_permohonan}', [ArsipPermohonanController::class, 'update'])->name('arsip_permohonan.update');
+    Route::delete('/dashboard/arsip_permohonan/destroy/{arsip_permohonan}', [ArsipPermohonanController::class, 'destroy'])->name('arsip_permohonan.destroy');
 });

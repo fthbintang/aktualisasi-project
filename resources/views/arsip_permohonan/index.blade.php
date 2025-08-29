@@ -76,7 +76,8 @@
                                                 <a href="{{ route('arsip_permohonan.edit', $row->id) }}"
                                                     class="text-warning font-weight-bold text-xs">Edit</a>
                                                 |
-                                                <form action="#" method="POST" class="d-inline form-delete">
+                                                <form action="{{ route('arsip_permohonan.destroy', $row->id) }}"
+                                                    method="POST" class="d-inline form-delete">
                                                     @csrf
                                                     @method('DELETE')
                                                     <button type="button"
