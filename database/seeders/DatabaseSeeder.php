@@ -2,6 +2,7 @@
 
 namespace Database\Seeders;
 
+use App\Models\ArsipPermohonan;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Laporan;
@@ -26,6 +27,8 @@ class DatabaseSeeder extends Seeder
             'username' => 'bintang',
             'password' => bcrypt('bintang')
         ]);
+
+        ArsipPermohonan::factory(500)->create();
 
         // 2. Buat jenis laporan
         $jenisLaporans = [
