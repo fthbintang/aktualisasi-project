@@ -48,6 +48,7 @@ class ArsipPermohonanFactory extends Factory
             'no_berkas' => $noBerkas,
             'bulan' => $bulan,
             'arsip_permohonan_path' => $filePath,
+            'created_by' => $this->faker->name(),
             'created_at' => now(),
             'updated_at' => now(),
         ];

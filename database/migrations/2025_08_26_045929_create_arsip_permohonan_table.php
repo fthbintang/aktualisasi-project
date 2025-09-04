@@ -16,6 +16,8 @@ return new class extends Migration
             $table->string('no_berkas')->unique();
             $table->string('bulan');
             $table->string('arsip_permohonan_path');
+            $table->string('created_by');
+            $table->string('updated_by')->nullable();
             $table->timestamps();
             $table->softDeletes();
         });

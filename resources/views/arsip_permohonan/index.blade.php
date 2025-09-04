@@ -25,6 +25,8 @@
                                         <th>No Berkas</th>
                                         <th>Bulan</th>
                                         <th>File</th>
+                                        <th>Diupload Oleh</th>
+                                        <th>Diperbarui Oleh</th>
                                         <th>Aksi</th>
                                     </tr>
                                 </thead>
@@ -73,6 +75,16 @@
                         className: "text-center",
                         orderable: false,
                         searchable: false
+                    },
+                    {
+                        data: 'created_by',
+                        name: 'created_by',
+                        className: "text-center"
+                    },
+                    {
+                        data: 'updated_by',
+                        name: 'updated_by',
+                        className: "text-center"
                     },
                     {
                         data: 'aksi',

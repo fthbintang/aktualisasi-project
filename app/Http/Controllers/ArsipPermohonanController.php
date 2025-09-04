@@ -6,89 +6,18 @@ use Illuminate\Http\Request;
 use App\Models\ArsipPermohonan;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 
 class ArsipPermohonanController extends Controller
 {
-    // public function getData(Request $request)
-    // {
-    //     $query = ArsipPermohonan::query();
-
-    //     $totalRecords = $query->count();
-
-    //     // Filtering
-    //     if ($search = $request->input('search.value')) {
-    //         $query->where(function ($q) use ($search) {
-    //             $q->where('no_berkas', 'like', "%{$search}%")
-    //             ->orWhere('bulan', 'like', "%{$search}%");
-    //         });
-    //     }
-
-    //     $filteredRecords = $query->count();
-
-    //     // Ordering
-    //     if ($request->has('order')) {
-    //         $columns = $request->input('columns');
-    //         $order = $request->input('order')[0];
-    //         $columnName = $columns[$order['column']]['data'];
-    //         $dir = $order['dir'];
-    //         if (in_array($columnName, ['id','no_berkas','bulan','arsip_permohonan_path'])) {
-    //             $query->orderBy($columnName, $dir);
-    //         }
-    //     }
-
-    //     // Paging
-    //     $start = $request->input('start', 0);
-    //     $length = $request->input('length', 10);
-    //     $data = $query->skip($start)->take($length)->get();
-
-    //     // Format kolom file + aksi
-    //     $data->transform(function ($item) {
-    //         // --- File
-    //         $url = asset('storage/'.$item->arsip_permohonan_path);
-    //         $ext = strtolower(pathinfo($item->arsip_permohonan_path, PATHINFO_EXTENSION));
-
-    //         switch ($ext) {
-    //             case 'pdf':
-    //                 $icon = '<i class="bi bi-file-earmark-pdf-fill text-danger"></i>';
-    //                 break;
-    //             case 'doc':
-    //             case 'docx':
-    //                 $icon = '<i class="bi bi-file-earmark-word-fill text-primary"></i>';
-    //                 break;
-    //             case 'xls':
-    //             case 'xlsx':
-    //                 $icon = '<i class="bi bi-file-earmark-excel-fill text-success"></i>';
-    //                 break;
-    //             default:
-    //                 $icon = '<i class="bi bi-file-earmark-fill text-secondary"></i>';
-    //         }
-    //         $item->arsip_permohonan_path = '<a href="'.$url.'" target="_blank">'.$icon.' Lihat File</a>';
-
-    //         // --- Aksi (Edit + Hapus)
-    //         $editUrl = route('arsip_permohonan.edit', $item->id);
-    //         $deleteUrl = route('arsip_permohonan.destroy', $item->id);
-
-    //         $item->aksi = '
-    //             <a href="'.$editUrl.'" class="text-warning font-weight-bold text-xs me-2">Edit</a>
-    //             |
-    //             <form action="'.$deleteUrl.'" method="POST" class="d-inline form-delete">
-    //                 '.csrf_field().method_field('DELETE').'
-    //                 <button type="button" class="btn btn-link p-0 m-0 text-danger text-xs btn-delete">Hapus</button>
-    //             </form>
-    //         ';
-
-    //         return $item;
-    //     });
-
-    //     return response()->json([
-    //         'draw' => intval($request->input('draw')),
-    //         'recordsTotal' => $totalRecords,
-    //         'recordsFiltered' => $filteredRecords,
-    //         'data' => $data,
-    //     ]);
-    // }
+    public function index()
+    {
+        return view('arsip_permohonan.index', [
+            'breadcrumbs' => ['Arsip Permohonan'],
+        ]);
+    }
 
     public function getData(Request $request)
     {
@@ -100,7 +29,9 @@ class ArsipPermohonanController extends Controller
         if ($search = $request->input('search.value')) {
             $query->where(function ($q) use ($search) {
                 $q->where('no_berkas', 'like', "%{$search}%")
-                ->orWhere('bulan', 'like', "%{$search}%");
+                    ->orWhere('bulan', 'like', "%{$search}%")
+                    ->orWhere('created_by', 'like', "%{$search}%")
+                    ->orWhere('updated_by', 'like', "%{$search}%");
             });
         }
 
@@ -112,7 +43,7 @@ class ArsipPermohonanController extends Controller
             $order = $request->input('order')[0];
             $columnName = $columns[$order['column']]['data'];
             $dir = $order['dir'];
-            if (in_array($columnName, ['id','no_berkas','bulan','arsip_permohonan_path'])) {
+            if (in_array($columnName, ['id','no_berkas','bulan','arsip_permohonan_path','created_by', 'updated_by'])) {
                 $query->orderBy($columnName, $dir);
             }
         }
@@ -147,6 +78,9 @@ class ArsipPermohonanController extends Controller
             }
             $item->arsip_permohonan_path = '<a href="'.$url.'" target="_blank">'.$icon.' Lihat File</a>';
 
+            // Pastikan updated_by selalu ada (kalau null diganti '-')
+            $item->updated_by = $item->updated_by ?? '-';
+
             $editUrl = route('arsip_permohonan.edit', $item->id);
             $deleteUrl = route('arsip_permohonan.destroy', $item->id);
 
@@ -166,14 +100,6 @@ class ArsipPermohonanController extends Controller
             'recordsTotal' => $totalRecords,
             'recordsFiltered' => $filteredRecords,
             'data' => $data,
-        ]);
-    }
-
-    public function index()
-    {
-        return view('arsip_permohonan.index', [
-            'breadcrumbs' => ['Arsip Permohonan'],
-            'arsip_permohonan' => ArsipPermohonan::all()
         ]);
     }
 
@@ -213,6 +139,7 @@ class ArsipPermohonanController extends Controller
                 'no_berkas' => $noBerkas,
                 'bulan' => $request->bulan,
                 'arsip_permohonan_path' => $filePath,
+                'created_by' => Auth::user()->nama_lengkap,
             ]);
 
             Alert::success('Sukses!', 'Arsip permohonan berhasil ditambahkan.');
@@ -227,7 +154,6 @@ class ArsipPermohonanController extends Controller
             return back()->withInput();
         }
     }
-
 
     public function edit(ArsipPermohonan $arsip_permohonan)
     {
@@ -286,6 +212,7 @@ class ArsipPermohonanController extends Controller
                 'no_berkas' => $noBerkas,
                 'bulan' => $request->bulan,
                 'arsip_permohonan_path' => $filePath,
+                'updated_by' => Auth::user()->nama_lengkap,
             ]);
 
             Alert::success('Sukses!', 'Arsip permohonan berhasil diperbarui.');

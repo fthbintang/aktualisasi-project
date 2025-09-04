@@ -28,7 +28,7 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('bintang')
         ]);
 
-        // ArsipPermohonan::factory(500)->create();
+        ArsipPermohonan::factory(500)->create();
 
         // 2. Buat jenis laporan
         $jenisLaporans = [
