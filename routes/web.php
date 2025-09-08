@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ArsipGugatanController;
 use App\Http\Controllers\ArsipPermohonanController;
 use App\Http\Controllers\DaftarLaporanController;
 use App\Http\Controllers\DashboardController;
@@ -51,12 +52,15 @@ Route::middleware('auth')->group(function () {
     Route::delete('/dashboard/daftar_laporan/jenis/{jenis_laporan}/destroy', [DaftarLaporanController::class, 'destroy_jenis_laporan'])->name('daftar_laporan.destroy_jenis_laporan');
 
     // ARSIP PERMOHONAN
-    Route::get('/arsip-permohonan/data', [ArsipPermohonanController::class, 'getData'])->name('arsip_permohonan.data');
-
+    Route::get('/dashboard/arsip-permohonan/data', [ArsipPermohonanController::class, 'getData'])->name('arsip_permohonan.data');
     Route::get('/dashboard/arsip_permohonan', [ArsipPermohonanController::class, 'index'])->name('arsip_permohonan.index');
     Route::get('/dashboard/arsip_permohonan/create', [ArsipPermohonanController::class, 'create'])->name('arsip_permohonan.create');
     Route::post('/dashboard/arsip_permohonan/store', [ArsipPermohonanController::class, 'store'])->name('arsip_permohonan.store');
     Route::get('/dashboard/arsip_permohonan/edit/{arsip_permohonan}', [ArsipPermohonanController::class, 'edit'])->name('arsip_permohonan.edit');
     Route::put('/dashboard/arsip_permohonan/update/{arsip_permohonan}', [ArsipPermohonanController::class, 'update'])->name('arsip_permohonan.update');
     Route::delete('/dashboard/arsip_permohonan/destroy/{arsip_permohonan}', [ArsipPermohonanController::class, 'destroy'])->name('arsip_permohonan.destroy');
+
+    // ARSIP GUGATAN
+    Route::get('/dashboard/arsip-gugatan/data', [ArsipPermohonanController::class, 'getData'])->name('arsip_gugatan.data');
+    Route::get('/dashboard/arsip_gugatan', [ArsipGugatanController::class, 'index'])->name('arsip_gugatan.index');
 });
