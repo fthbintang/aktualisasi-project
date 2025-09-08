@@ -64,5 +64,7 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/arsip-gugatan/data', [ArsipGugatanController::class, 'getData'])->name('arsip_gugatan.data');
     Route::get('/dashboard/arsip_gugatan', [ArsipGugatanController::class, 'index'])->name('arsip_gugatan.index');
     Route::get('/dashboard/arsip_gugatan/create', [ArsipGugatanController::class, 'create'])->name('arsip_gugatan.create');
+    Route::get('/dashboard/arsip_gugatan/edit/{arsip_gugatan}', [ArsipGugatanController::class, 'edit'])->name('arsip_gugatan.edit');
+    Route::put('/dashboard/arsip_gugatan/edit/{arsip_gugatan}', [ArsipGugatanController::class, 'update'])->name('arsip_gugatan.update');
     Route::post('/dashboard/arsip_gugatan/store', [ArsipGugatanController::class, 'store'])->name('arsip_gugatan.store');
 });

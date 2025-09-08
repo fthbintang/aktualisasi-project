@@ -9,6 +9,7 @@ use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Validator;
 
 class ArsipPermohonanController extends Controller
 {
@@ -109,24 +110,38 @@ class ArsipPermohonanController extends Controller
             'breadcrumbs' => ['Arsip Permohonan', 'Tambah Arsip Permohonan']
         ]);
     }
-    
+
     public function store(Request $request)
     {
         try {
-            $request->validate([
+            // Validasi awal
+            $validator = Validator::make($request->all(), [
                 'no_urut' => 'required|integer|min:1',
                 'tahun_berkas' => 'required|integer|min:2000',
                 'bulan' => 'required|string',
-                'arsip_permohonan' => 'required|file|mimes:pdf|max:2048', // Hanya PDF
+                'arsip_permohonan' => 'required|file|mimes:pdf|max:2048', // hanya PDF
             ]);
 
             // Buat No Berkas
             $noBerkas = "{$request->no_urut}.Pdt.P.{$request->tahun_berkas}.PN Kmn";
 
+            // 🔎 Cek duplikat
+            $duplicate = ArsipPermohonan::where('no_berkas', $noBerkas)->exists();
+            if ($duplicate) {
+                $validator->after(function ($v) use ($noBerkas) {
+                    $v->errors()->add('no_urut', "No Berkas '{$noBerkas}' sudah ada. Silakan gunakan nomor lain.");
+                });
+            }
+
+            // Jika validasi gagal
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+
             // Tentukan path folder berdasarkan tahun & bulan
             $folderPath = "arsip_permohonan/{$request->tahun_berkas}/{$request->bulan}";
 
-            // Upload file ke folder arsip_permohonan/tahun/bulan dengan nama [no_berkas].pdf
+            // Upload file
             $file = $request->file('arsip_permohonan');
             $filePath = $file->storeAs(
                 $folderPath,
@@ -167,23 +182,41 @@ class ArsipPermohonanController extends Controller
     public function update(Request $request, ArsipPermohonan $arsip_permohonan)
     {
         try {
-            // Validasi
-            $request->validate([
+            // Validasi awal
+            $validator = Validator::make($request->all(), [
                 'no_urut' => 'required|integer|min:1',
                 'tahun_berkas' => 'required|integer|min:2000',
                 'bulan' => 'required|string',
-                'arsip_permohonan' => 'nullable|file|mimes:pdf|max:2048', // opsional
+                'arsip_permohonan' => 'nullable|file|mimes:pdf|max:2048',
             ]);
 
             // Buat No Berkas baru
             $noBerkas = "{$request->no_urut}.Pdt.P.{$request->tahun_berkas}.PN Kmn";
 
+            // 🔎 Cek duplikat (kecuali record yang sedang diedit)
+            $duplicate = ArsipPermohonan::where('no_berkas', $noBerkas)
+                ->where('id', '!=', $arsip_permohonan->id)
+                ->exists();
+
+            if ($duplicate) {
+                $validator->after(function ($v) use ($noBerkas) {
+                    $v->errors()->add('no_urut', "No Berkas '{$noBerkas}' sudah ada. Silakan gunakan nomor lain.");
+                });
+            }
+
+            // Jika validasi gagal
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+
             // Tentukan folder baru berdasarkan tahun & bulan
             $folderPath = "arsip_permohonan/{$request->tahun_berkas}/{$request->bulan}";
+            $filePath = $arsip_permohonan->arsip_permohonan_path; // default tetap pakai path lama
 
             if ($request->hasFile('arsip_permohonan')) {
                 // Hapus file lama jika ada
-                if ($arsip_permohonan->arsip_permohonan_path && Storage::disk('public')->exists($arsip_permohonan->arsip_permohonan_path)) {
+                if (!empty($arsip_permohonan->arsip_permohonan_path) 
+                    && Storage::disk('public')->exists($arsip_permohonan->arsip_permohonan_path)) {
                     Storage::disk('public')->delete($arsip_permohonan->arsip_permohonan_path);
                 }
 
@@ -195,16 +228,17 @@ class ArsipPermohonanController extends Controller
                     'public'
                 );
             } else {
-                // Jika tidak ada file baru
-                // tapi tahun/bulan/no urut berubah → pindahkan file lama ke path baru
-                $oldPath = $arsip_permohonan->arsip_permohonan_path;
-                $newPath = $folderPath . "/{$noBerkas}.pdf";
+                // Jika tidak ada file baru tapi info berubah → pindahkan file lama
+                if (!empty($arsip_permohonan->arsip_permohonan_path)) {
+                    $oldPath = $arsip_permohonan->arsip_permohonan_path;
+                    $newPath = $folderPath . "/{$noBerkas}.pdf";
 
-                if ($oldPath !== $newPath && Storage::disk('public')->exists($oldPath)) {
-                    Storage::disk('public')->move($oldPath, $newPath);
+                    if ($oldPath !== $newPath && Storage::disk('public')->exists($oldPath)) {
+                        Storage::disk('public')->move($oldPath, $newPath);
+                    }
+
+                    $filePath = $newPath;
                 }
-
-                $filePath = $newPath;
             }
 
             // Update database

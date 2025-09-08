@@ -7,7 +7,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Validator;
 
 class ArsipGugatanController extends Controller
 {
@@ -81,10 +83,10 @@ class ArsipGugatanController extends Controller
             // Pastikan updated_by selalu ada (kalau null diganti '-')
             $item->updated_by = $item->updated_by ?? '-';
 
-            // $editUrl = route('arsip_gugatan.edit', $item->id);
+            $editUrl = route('arsip_gugatan.edit', $item->id);
             // $deleteUrl = route('arsip_gugatan.destroy', $item->id);
 
-            $editUrl = '#';
+            // $editUrl = '#';
             $deleteUrl = '#';
 
             $item->aksi = '
@@ -116,20 +118,34 @@ class ArsipGugatanController extends Controller
     public function store(Request $request)
     {
         try {
-            $request->validate([
+            // Validasi awal
+            $validator = Validator::make($request->all(), [
                 'no_urut' => 'required|integer|min:1',
                 'tahun_berkas' => 'required|integer|min:2000',
                 'bulan' => 'required|string',
-                'arsip_gugatan' => 'required|file|mimes:pdf|max:2048', // Hanya PDF
+                'arsip_gugatan' => 'required|file|mimes:pdf|max:2048', // hanya PDF
             ]);
 
             // Buat No Berkas
             $noBerkas = "{$request->no_urut}.Pdt.G.{$request->tahun_berkas}.PN Kmn";
 
+            // 🔎 Cek duplikat
+            $duplicate = ArsipGugatan::where('no_berkas', $noBerkas)->exists();
+            if ($duplicate) {
+                $validator->after(function ($v) use ($noBerkas) {
+                    $v->errors()->add('no_urut', "No Berkas '{$noBerkas}' sudah ada. Silakan gunakan nomor lain.");
+                });
+            }
+
+            // Jika validasi gagal
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+
             // Tentukan path folder berdasarkan tahun & bulan
             $folderPath = "arsip_gugatan/{$request->tahun_berkas}/{$request->bulan}";
 
-            // Upload file ke folder arsip_gugatan/tahun/bulan dengan nama [no_berkas].pdf
+            // Upload file
             $file = $request->file('arsip_gugatan');
             $filePath = $file->storeAs(
                 $folderPath,
@@ -158,5 +174,89 @@ class ArsipGugatanController extends Controller
         }
     }
 
+    public function edit(ArsipGugatan $arsip_gugatan)
+    {
+        return view('arsip_gugatan.edit', [
+            'breadcrumbs' => ['Arsip Gugatan', 'Edit Arsip Gugatan'],
+            'arsip_gugatan' => $arsip_gugatan
+        ]);
+    }
+
+    public function update(Request $request, ArsipGugatan $arsip_gugatan)
+    {
+        try {
+            // Buat validator manual supaya bisa tambah error custom
+            $validator = Validator::make($request->all(), [
+                'no_urut' => 'required|integer|min:1',
+                'tahun_berkas' => 'required|integer|min:2000',
+                'bulan' => 'required|string',
+                'arsip_gugatan' => 'nullable|file|mimes:pdf|max:2048',
+            ]);
+
+            // Buat No Berkas baru
+            $noBerkas = "{$request->no_urut}.Pdt.G.{$request->tahun_berkas}.PN Kmn";
+
+            // Cek duplicate
+            $duplicate = ArsipGugatan::where('no_berkas', $noBerkas)
+                ->where('id', '!=', $arsip_gugatan->id)
+                ->exists();
+
+            if ($duplicate) {
+                $validator->after(function ($v) use ($noBerkas) {
+                    $v->errors()->add('no_urut', "No Berkas '{$noBerkas}' sudah ada. Silakan gunakan nomor lain.");
+                });
+            }
+
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+
+            // Tentukan folder berdasarkan tahun & bulan
+            $folderPath = "arsip_gugatan/{$request->tahun_berkas}/{$request->bulan}";
+
+            $filePath = $arsip_gugatan->arsip_gugatan_path; // default path lama
+
+            if ($request->hasFile('arsip_gugatan')) {
+                // Upload file baru → hapus file lama
+                if ($filePath && Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
+                }
+
+                $file = $request->file('arsip_gugatan');
+                $filePath = $file->storeAs($folderPath, "{$noBerkas}.pdf", 'public');
+            } else {
+                // Tidak ada file baru → cek perubahan folder
+                if ($filePath && Storage::disk('public')->exists($filePath)) {
+                    $newPath = $folderPath . "/{$noBerkas}.pdf";
+                    if ($filePath !== $newPath) {
+                        Storage::disk('public')->move($filePath, $newPath);
+                        $filePath = $newPath;
+                    }
+                } else {
+                    $filePath = $folderPath . "/{$noBerkas}.pdf";
+                }
+            }
+
+            // Update database
+            $arsip_gugatan->update([
+                'no_berkas' => $noBerkas,
+                'bulan' => $request->bulan,
+                'arsip_gugatan_path' => $filePath,
+                'updated_by' => Auth::user()->nama_lengkap,
+            ]);
+
+            Alert::success('Sukses!', 'Arsip gugatan berhasil diperbarui.');
+            return redirect()->route('arsip_gugatan.index');
+
+        } catch (\Exception $e) {
+            Log::error('Gagal memperbarui arsip gugatan', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            Alert::error('Gagal!', 'Terjadi kesalahan saat memperbarui arsip.');
+            return back()->withInput();
+        }
+    }
 
 }
