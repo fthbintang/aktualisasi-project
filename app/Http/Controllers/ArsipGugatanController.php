@@ -184,4 +184,11 @@ class ArsipGugatanController extends Controller
         ]);
     }
 
+    public function create()
+    {
+        return view('arsip_gugatan.create', [
+            'breadcrumbs' => ['Arsip Permohonan', 'Tambah Arsip Gugatan'],
+        ]);
+    }
+
 }

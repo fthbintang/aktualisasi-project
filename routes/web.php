@@ -63,4 +63,5 @@ Route::middleware('auth')->group(function () {
     // ARSIP GUGATAN
     Route::get('/dashboard/arsip-gugatan/data', [ArsipPermohonanController::class, 'getData'])->name('arsip_gugatan.data');
     Route::get('/dashboard/arsip_gugatan', [ArsipGugatanController::class, 'index'])->name('arsip_gugatan.index');
+    Route::get('/dashboard/arsip_gugatan/create', [ArsipGugatanController::class, 'create'])->name('arsip_gugatan.create');
 });
