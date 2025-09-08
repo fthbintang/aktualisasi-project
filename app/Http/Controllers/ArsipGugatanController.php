@@ -2,8 +2,8 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\ArsipGugatan;
 use Illuminate\Http\Request;
-use App\Models\ArsipPermohonan;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
 use Illuminate\Support\Facades\Auth;
@@ -11,18 +11,18 @@ use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
 
-class ArsipPermohonanController extends Controller
+class ArsipGugatanController extends Controller
 {
     public function index()
     {
-        return view('arsip_permohonan.index', [
-            'breadcrumbs' => ['Arsip Permohonan'],
+        return view('arsip_gugatan.index', [
+            'breadcrumbs' => ['Arsip Gugatan'],
         ]);
     }
 
     public function getData(Request $request)
     {
-        $query = ArsipPermohonan::query();
+        $query = ArsipGugatan::query();
 
         $totalRecords = $query->count();
 
@@ -30,9 +30,9 @@ class ArsipPermohonanController extends Controller
         if ($search = $request->input('search.value')) {
             $query->where(function ($q) use ($search) {
                 $q->where('no_berkas', 'like', "%{$search}%")
-                    ->orWhere('bulan', 'like', "%{$search}%")
-                    ->orWhere('created_by', 'like', "%{$search}%")
-                    ->orWhere('updated_by', 'like', "%{$search}%");
+                ->orWhere('bulan', 'like', "%{$search}%")
+                ->orWhere('created_by', 'like', "%{$search}%")
+                ->orWhere('updated_by', 'like', "%{$search}%");
             });
         }
 
@@ -44,7 +44,7 @@ class ArsipPermohonanController extends Controller
             $order = $request->input('order')[0];
             $columnName = $columns[$order['column']]['data'];
             $dir = $order['dir'];
-            if (in_array($columnName, ['id','no_berkas','bulan','arsip_permohonan_path','created_by', 'updated_by'])) {
+            if (in_array($columnName, ['id','no_berkas','bulan','arsip_gugatan_path','created_by', 'updated_by'])) {
                 $query->orderBy($columnName, $dir);
             }
         }
@@ -57,10 +57,10 @@ class ArsipPermohonanController extends Controller
         $length = $request->input('length', 10);
         $data = $query->skip($start)->take($length)->get();
 
-        // Transform data (file + aksi) tetap sama
+        // Transform data (file + aksi)
         $data->transform(function ($item) {
-            $url = asset('storage/'.$item->arsip_permohonan_path);
-            $ext = strtolower(pathinfo($item->arsip_permohonan_path, PATHINFO_EXTENSION));
+            $url = asset('storage/'.$item->arsip_gugatan_path);
+            $ext = strtolower(pathinfo($item->arsip_gugatan_path, PATHINFO_EXTENSION));
 
             switch ($ext) {
                 case 'pdf':
@@ -77,13 +77,17 @@ class ArsipPermohonanController extends Controller
                 default:
                     $icon = '<i class="bi bi-file-earmark-fill text-secondary"></i>';
             }
-            $item->arsip_permohonan_path = '<a href="'.$url.'" target="_blank">'.$icon.' Lihat File</a>';
+
+            $item->arsip_gugatan_path = '<a href="'.$url.'" target="_blank">'.$icon.' Lihat File</a>';
 
             // Pastikan updated_by selalu ada (kalau null diganti '-')
             $item->updated_by = $item->updated_by ?? '-';
 
-            $editUrl = route('arsip_permohonan.edit', $item->id);
-            $deleteUrl = route('arsip_permohonan.destroy', $item->id);
+            $editUrl = route('arsip_gugatan.edit', $item->id);
+            $deleteUrl = route('arsip_gugatan.destroy', $item->id);
+
+            // $editUrl = '#';
+            // $deleteUrl = '#';
 
             $item->aksi = '
                 <a href="'.$editUrl.'" class="text-warning font-weight-bold text-xs me-2">Edit</a>
@@ -106,8 +110,8 @@ class ArsipPermohonanController extends Controller
 
     public function create()
     {
-        return view('arsip_permohonan.create', [
-            'breadcrumbs' => ['Arsip Permohonan', 'Tambah Arsip Permohonan']
+        return view('arsip_gugatan.create', [
+            'breadcrumbs' => ['Arsip Gugatan', 'Tambah Arsip Gugatan'],
         ]);
     }
 
@@ -119,14 +123,14 @@ class ArsipPermohonanController extends Controller
                 'no_urut' => 'required|integer|min:1',
                 'tahun_berkas' => 'required|integer|min:2000',
                 'bulan' => 'required|string',
-                'arsip_permohonan' => 'required|file|mimes:pdf|max:2048', // hanya PDF
+                'arsip_gugatan' => 'required|file|mimes:pdf|max:2048', // hanya PDF
             ]);
 
             // Buat No Berkas
-            $noBerkas = "{$request->no_urut}.Pdt.P.{$request->tahun_berkas}.PN Kmn";
+            $noBerkas = "{$request->no_urut}.Pdt.G.{$request->tahun_berkas}.PN Kmn";
 
             // 🔎 Cek duplikat
-            $duplicate = ArsipPermohonan::where('no_berkas', $noBerkas)->exists();
+            $duplicate = ArsipGugatan::where('no_berkas', $noBerkas)->exists();
             if ($duplicate) {
                 $validator->after(function ($v) use ($noBerkas) {
                     $v->errors()->add('no_urut', "No Berkas '{$noBerkas}' sudah ada. Silakan gunakan nomor lain.");
@@ -139,10 +143,10 @@ class ArsipPermohonanController extends Controller
             }
 
             // Tentukan path folder berdasarkan tahun & bulan
-            $folderPath = "arsip_permohonan/{$request->tahun_berkas}/{$request->bulan}";
+            $folderPath = "arsip_gugatan/{$request->tahun_berkas}/{$request->bulan}";
 
             // Upload file
-            $file = $request->file('arsip_permohonan');
+            $file = $request->file('arsip_gugatan');
             $filePath = $file->storeAs(
                 $folderPath,
                 "{$noBerkas}.pdf",
@@ -150,18 +154,18 @@ class ArsipPermohonanController extends Controller
             );
 
             // Simpan ke database
-            ArsipPermohonan::create([
+            ArsipGugatan::create([
                 'no_berkas' => $noBerkas,
                 'bulan' => $request->bulan,
-                'arsip_permohonan_path' => $filePath,
+                'arsip_gugatan_path' => $filePath,
                 'created_by' => Auth::user()->nama_lengkap,
             ]);
 
-            Alert::success('Sukses!', 'Arsip permohonan berhasil ditambahkan.');
-            return redirect()->route('arsip_permohonan.index');
+            Alert::success('Sukses!', 'Arsip gugatan berhasil ditambahkan.');
+            return redirect()->route('arsip_gugatan.index');
 
         } catch (\Exception $e) {
-            Log::error('Gagal menyimpan arsip permohonan', [
+            Log::error('Gagal menyimpan arsip gugatan', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -170,32 +174,31 @@ class ArsipPermohonanController extends Controller
         }
     }
 
-    public function edit(ArsipPermohonan $arsip_permohonan)
+    public function edit(ArsipGugatan $arsip_gugatan)
     {
-        return view('arsip_permohonan.edit', [
-            'breadcrumbs' => ['Arsip Permohonan', 'Edit Arsip Permohonan'],
-            'arsip_permohonan' => $arsip_permohonan,
-            'tahunBerkas'
+        return view('arsip_gugatan.edit', [
+            'breadcrumbs' => ['Arsip Gugatan', 'Edit Arsip Gugatan'],
+            'arsip_gugatan' => $arsip_gugatan
         ]);
     }
 
-    public function update(Request $request, ArsipPermohonan $arsip_permohonan)
+    public function update(Request $request, ArsipGugatan $arsip_gugatan)
     {
         try {
-            // Validasi awal
+            // Buat validator manual supaya bisa tambah error custom
             $validator = Validator::make($request->all(), [
                 'no_urut' => 'required|integer|min:1',
                 'tahun_berkas' => 'required|integer|min:2000',
                 'bulan' => 'required|string',
-                'arsip_permohonan' => 'nullable|file|mimes:pdf|max:2048',
+                'arsip_gugatan' => 'nullable|file|mimes:pdf|max:2048',
             ]);
 
             // Buat No Berkas baru
-            $noBerkas = "{$request->no_urut}.Pdt.P.{$request->tahun_berkas}.PN Kmn";
+            $noBerkas = "{$request->no_urut}.Pdt.G.{$request->tahun_berkas}.PN Kmn";
 
-            // 🔎 Cek duplikat (kecuali record yang sedang diedit)
-            $duplicate = ArsipPermohonan::where('no_berkas', $noBerkas)
-                ->where('id', '!=', $arsip_permohonan->id)
+            // Cek duplicate
+            $duplicate = ArsipGugatan::where('no_berkas', $noBerkas)
+                ->where('id', '!=', $arsip_gugatan->id)
                 ->exists();
 
             if ($duplicate) {
@@ -204,86 +207,82 @@ class ArsipPermohonanController extends Controller
                 });
             }
 
-            // Jika validasi gagal
             if ($validator->fails()) {
                 return back()->withErrors($validator)->withInput();
             }
 
-            // Tentukan folder baru berdasarkan tahun & bulan
-            $folderPath = "arsip_permohonan/{$request->tahun_berkas}/{$request->bulan}";
-            $filePath = $arsip_permohonan->arsip_permohonan_path; // default tetap pakai path lama
+            // Tentukan folder berdasarkan tahun & bulan
+            $folderPath = "arsip_gugatan/{$request->tahun_berkas}/{$request->bulan}";
 
-            if ($request->hasFile('arsip_permohonan')) {
-                // Hapus file lama jika ada
-                if (!empty($arsip_permohonan->arsip_permohonan_path) 
-                    && Storage::disk('public')->exists($arsip_permohonan->arsip_permohonan_path)) {
-                    Storage::disk('public')->delete($arsip_permohonan->arsip_permohonan_path);
+            $filePath = $arsip_gugatan->arsip_gugatan_path; // default path lama
+
+            if ($request->hasFile('arsip_gugatan')) {
+                // Upload file baru → hapus file lama
+                if ($filePath && Storage::disk('public')->exists($filePath)) {
+                    Storage::disk('public')->delete($filePath);
                 }
 
-                // Upload file baru
-                $file = $request->file('arsip_permohonan');
-                $filePath = $file->storeAs(
-                    $folderPath,
-                    "{$noBerkas}.pdf",
-                    'public'
-                );
+                $file = $request->file('arsip_gugatan');
+                $filePath = $file->storeAs($folderPath, "{$noBerkas}.pdf", 'public');
             } else {
-                // Jika tidak ada file baru tapi info berubah → pindahkan file lama
-                if (!empty($arsip_permohonan->arsip_permohonan_path)) {
-                    $oldPath = $arsip_permohonan->arsip_permohonan_path;
+                // Tidak ada file baru → cek perubahan folder
+                if ($filePath && Storage::disk('public')->exists($filePath)) {
                     $newPath = $folderPath . "/{$noBerkas}.pdf";
-
-                    if ($oldPath !== $newPath && Storage::disk('public')->exists($oldPath)) {
-                        Storage::disk('public')->move($oldPath, $newPath);
+                    if ($filePath !== $newPath) {
+                        Storage::disk('public')->move($filePath, $newPath);
+                        $filePath = $newPath;
                     }
-
-                    $filePath = $newPath;
+                } else {
+                    $filePath = $folderPath . "/{$noBerkas}.pdf";
                 }
             }
 
             // Update database
-            $arsip_permohonan->update([
+            $arsip_gugatan->update([
                 'no_berkas' => $noBerkas,
                 'bulan' => $request->bulan,
-                'arsip_permohonan_path' => $filePath,
+                'arsip_gugatan_path' => $filePath,
                 'updated_by' => Auth::user()->nama_lengkap,
             ]);
 
-            Alert::success('Sukses!', 'Arsip permohonan berhasil diperbarui.');
-            return redirect()->route('arsip_permohonan.index');
+            Alert::success('Sukses!', 'Arsip gugatan berhasil diperbarui.');
+            return redirect()->route('arsip_gugatan.index');
 
         } catch (\Exception $e) {
-            Log::error('Gagal memperbarui arsip permohonan', [
+            Log::error('Gagal memperbarui arsip gugatan', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
-            Alert::error('Gagal!', 'Terjadi kesalahan saat memperbarui arsip: ' . $e->getMessage());
+
+            Alert::error('Gagal!', 'Terjadi kesalahan saat memperbarui arsip.');
             return back()->withInput();
         }
     }
 
-    public function destroy(ArsipPermohonan $arsip_permohonan)
+    public function destroy(ArsipGugatan $arsip_gugatan)
     {
         try {
             // Hapus file PDF dari storage jika ada
-            if ($arsip_permohonan->arsip_permohonan_path && Storage::disk('public')->exists($arsip_permohonan->arsip_permohonan_path)) {
-                Storage::disk('public')->delete($arsip_permohonan->arsip_permohonan_path);
+            if ($arsip_gugatan->arsip_gugatan_path && Storage::disk('public')->exists($arsip_gugatan->arsip_gugatan_path)) {
+                Storage::disk('public')->delete($arsip_gugatan->arsip_gugatan_path);
             }
 
             // Hapus data dari database
-            $arsip_permohonan->delete();
+            $arsip_gugatan->delete();
 
-            Alert::success('Sukses!', 'Arsip permohonan berhasil dihapus.');
-            return redirect()->route('arsip_permohonan.index');
+            Alert::success('Sukses!', 'Arsip gugatan berhasil dihapus.');
+            return redirect()->route('arsip_gugatan.index');
 
         } catch (\Exception $e) {
-            Log::error('Gagal menghapus arsip permohonan', [
+            Log::error('Gagal menghapus arsip gugatan', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
+
             Alert::error('Gagal!', 'Terjadi kesalahan saat menghapus arsip: ' . $e->getMessage());
             return back();
         }
     }
+
 
 }
