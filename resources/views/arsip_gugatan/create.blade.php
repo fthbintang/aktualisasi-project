@@ -7,7 +7,7 @@
             <h6>{{ end($breadcrumbs) }}</h6>
         </div>
         <div class="card-body">
-            <form action="#" method="POST" enctype="multipart/form-data">
+            <form action="{{ route('arsip_gugatan.store') }}" method="POST" enctype="multipart/form-data">
                 @csrf
 
                 <!-- No Berkas Terstruktur -->

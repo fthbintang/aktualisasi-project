@@ -61,7 +61,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/dashboard/arsip_permohonan/destroy/{arsip_permohonan}', [ArsipPermohonanController::class, 'destroy'])->name('arsip_permohonan.destroy');
 
     // ARSIP GUGATAN
-    Route::get('/dashboard/arsip-gugatan/data', [ArsipPermohonanController::class, 'getData'])->name('arsip_gugatan.data');
+    Route::get('/dashboard/arsip-gugatan/data', [ArsipGugatanController::class, 'getData'])->name('arsip_gugatan.data');
     Route::get('/dashboard/arsip_gugatan', [ArsipGugatanController::class, 'index'])->name('arsip_gugatan.index');
     Route::get('/dashboard/arsip_gugatan/create', [ArsipGugatanController::class, 'create'])->name('arsip_gugatan.create');
+    Route::post('/dashboard/arsip_gugatan/store', [ArsipGugatanController::class, 'store'])->name('arsip_gugatan.store');
 });

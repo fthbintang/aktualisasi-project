@@ -15,7 +15,7 @@
                     </div>
                     <div class="card-body px-3 pt-3 pb-2">
                         <div class="table-responsive">
-                            <table id="arsipTable"
+                            <table id="arsipTableGugatan"
                                 class="table table-bordered table-striped table-hover align-middle mb-0"
                                 style="width:100%">
                                 <thead class="table-dark text-center">
@@ -45,7 +45,7 @@
 
     <script>
         $(document).ready(function() {
-            $('#arsipTable').DataTable({
+            $('#arsipTableGugatan').DataTable({
                 processing: true,
                 serverSide: true,
                 ajax: "{{ route('arsip_gugatan.data') }}",
@@ -119,7 +119,6 @@
         $(document).on('click', '.btn-delete', function(e) {
             e.preventDefault();
             const form = $(this).closest('form');
-
             Swal.fire({
                 title: 'Yakin ingin menghapus?',
                 text: "Data yang dihapus tidak bisa dikembalikan!",
@@ -130,9 +129,7 @@
                 confirmButtonText: 'Ya, hapus!',
                 cancelButtonText: 'Batal'
             }).then((result) => {
-                if (result.isConfirmed) {
-                    form.submit();
-                }
+                if (result.isConfirmed) form.submit();
             });
         });
     </script>
