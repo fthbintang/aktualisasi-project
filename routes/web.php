@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\ArsipGugatanController;
 use App\Http\Controllers\ArsipPermohonanController;
+use App\Http\Controllers\ArsipPidanaController;
 use App\Http\Controllers\DaftarLaporanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
@@ -68,4 +69,8 @@ Route::middleware('auth')->group(function () {
     Route::put('/dashboard/arsip_gugatan/edit/{arsip_gugatan}', [ArsipGugatanController::class, 'update'])->name('arsip_gugatan.update');
     Route::post('/dashboard/arsip_gugatan/store', [ArsipGugatanController::class, 'store'])->name('arsip_gugatan.store');
     Route::delete('/dashboard/arsip_gugatan/destroy/{arsip_gugatan}', [ArsipGugatanController::class, 'destroy'])->name('arsip_gugatan.destroy');
+
+    // ARSIP PIDANA
+    Route::get('/dashboard/arsip-pidana/data', [ArsipPidanaController::class, 'getData'])->name('arsip_pidana.data');
+    Route::get('/dashboard/arsip_pidana', [ArsipPidanaController::class, 'index'])->name('arsip_pidana.index');
 });
