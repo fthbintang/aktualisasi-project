@@ -4,6 +4,11 @@ namespace App\Http\Controllers;
 
 use App\Models\ArsipPidana;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Log;
+use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Auth;
+use RealRashid\SweetAlert\Facades\Alert;
+use Illuminate\Support\Facades\Validator;
 
 class ArsipPidanaController extends Controller
 {
@@ -101,4 +106,70 @@ class ArsipPidanaController extends Controller
             'data' => $data,
         ]);
     }
+
+    public function create()
+    {
+        return view('arsip_pidana.create', [
+            'breadcrumbs' => ['Arsip Pidana', 'Tambah Arsip Pidana']
+        ]);
+    }
+
+    public function store(Request $request)
+    {
+        try {
+            // Validasi awal
+            $validator = Validator::make($request->all(), [
+                'no_urut'       => 'required|integer|min:1',
+                'tahun_berkas'  => 'required|integer|min:2000',
+                'bulan'         => 'required|string',
+                'arsip_pidana'  => 'required|file|mimes:pdf|max:2048', // hanya PDF
+            ]);
+
+            $noBerkas = "{$request->no_berkas}";
+
+            // 🔎 Cek duplikat
+            $duplicate = ArsipPidana::where('no_berkas', $noBerkas)->exists();
+            if ($duplicate) {
+                $validator->after(function ($v) use ($noBerkas) {
+                    $v->errors()->add('no_urut', "No Berkas '{$noBerkas}' sudah ada. Silakan gunakan nomor lain.");
+                });
+            }
+
+            // Jika validasi gagal
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+
+            // Tentukan path folder berdasarkan tahun & bulan
+            $folderPath = "arsip_pidana/{$request->tahun_berkas}/{$request->bulan}";
+
+            // Upload file dengan nama asli
+            $file = $request->file('arsip_pidana');
+            $filePath = $file->storeAs(
+                $folderPath,
+                $file->getClientOriginalName(),
+                'public'
+            );
+
+            // Simpan ke database
+            ArsipPidana::create([
+                'no_berkas'         => $noBerkas,
+                'bulan'             => $request->bulan,
+                'arsip_pidana_path' => $filePath,
+                'created_by'        => Auth::user()->nama_lengkap,
+            ]);
+
+            Alert::success('Sukses!', 'Arsip pidana berhasil ditambahkan.');
+            return redirect()->route('arsip_pidana.index');
+
+        } catch (\Exception $e) {
+            Log::error('Gagal menyimpan arsip pidana', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            Alert::error('Gagal!', 'Terjadi kesalahan saat menyimpan arsip: ' . $e->getMessage());
+            return back()->withInput();
+        }
+    }
+
 }

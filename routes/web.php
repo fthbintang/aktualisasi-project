@@ -73,4 +73,6 @@ Route::middleware('auth')->group(function () {
     // ARSIP PIDANA
     Route::get('/dashboard/arsip-pidana/data', [ArsipPidanaController::class, 'getData'])->name('arsip_pidana.data');
     Route::get('/dashboard/arsip_pidana', [ArsipPidanaController::class, 'index'])->name('arsip_pidana.index');
+    Route::get('/dashboard/arsip_pidana/create', [ArsipPidanaController::class, 'create'])->name('arsip_pidana.create');
+    Route::post('/dashboard/arsip_pidana/store', [ArsipPidanaController::class, 'store'])->name('arsip_pidana.store');
 });

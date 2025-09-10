@@ -2,8 +2,6 @@
 
 namespace Database\Seeders;
 
-use App\Models\ArsipGugatan;
-use App\Models\ArsipPermohonan;
 use App\Models\ArsipPidana;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
@@ -32,7 +30,7 @@ class DatabaseSeeder extends Seeder
 
         // ArsipPermohonan::factory(500)->create();
         // ArsipGugatan::factory(20)->create();
-        ArsipPidana::factory(100)->create();
+        // ArsipPidana::factory(100)->create();
 
         // 2. Buat jenis laporan
         $jenisLaporans = [
