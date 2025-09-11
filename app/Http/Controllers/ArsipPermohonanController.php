@@ -175,7 +175,6 @@ class ArsipPermohonanController extends Controller
         return view('arsip_permohonan.edit', [
             'breadcrumbs' => ['Arsip Permohonan', 'Edit Arsip Permohonan'],
             'arsip_permohonan' => $arsip_permohonan,
-            'tahunBerkas'
         ]);
     }
 
