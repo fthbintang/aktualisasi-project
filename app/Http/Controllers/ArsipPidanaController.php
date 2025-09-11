@@ -84,10 +84,10 @@ class ArsipPidanaController extends Controller
             $item->updated_by = $item->updated_by ?? '-';
 
             $editUrl = route('arsip_pidana.edit', $item->id);
-            // $deleteUrl = route('arsip_pidana.destroy', $item->id);
+            $deleteUrl = route('arsip_pidana.destroy', $item->id);
 
             // $editUrl = '#';
-            $deleteUrl = '#';
+            // $deleteUrl = '#';
 
             $item->aksi = '
                 <a href="'.$editUrl.'" class="text-warning font-weight-bold text-xs me-2">Edit</a>
@@ -262,6 +262,30 @@ class ArsipPidanaController extends Controller
             ]);
             Alert::error('Gagal!', 'Terjadi kesalahan saat memperbarui arsip: ' . $e->getMessage());
             return back()->withInput();
+        }
+    }
+
+    public function destroy(ArsipPidana $arsip_pidana)
+    {
+        try {
+            // Hapus file PDF dari storage jika ada
+            if ($arsip_pidana->arsip_pidana_path && Storage::disk('public')->exists($arsip_pidana->arsip_pidana_path)) {
+                Storage::disk('public')->delete($arsip_pidana->arsip_pidana_path);
+            }
+
+            // Hapus data dari database
+            $arsip_pidana->delete();
+
+            Alert::success('Sukses!', 'Arsip permohonan berhasil dihapus.');
+            return redirect()->route('arsip_pidana.index');
+
+        } catch (\Exception $e) {
+            Log::error('Gagal menghapus arsip permohonan', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            Alert::error('Gagal!', 'Terjadi kesalahan saat menghapus arsip: ' . $e->getMessage());
+            return back();
         }
     }
 

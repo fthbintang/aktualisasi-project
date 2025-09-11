@@ -77,4 +77,5 @@ Route::middleware('auth')->group(function () {
     Route::get('/dashboard/arsip_pidana/edit/{arsip_pidana}', [ArsipPidanaController::class, 'edit'])->name('arsip_pidana.edit');
     Route::post('/dashboard/arsip_pidana/store', [ArsipPidanaController::class, 'store'])->name('arsip_pidana.store');
     Route::put('/dashboard/arsip_pidana/update/{arsip_pidana}', [ArsipPidanaController::class, 'update'])->name('arsip_pidana.update');
+    Route::delete('/dashboard/arsip_pidana/destroy/{arsip_pidana}', [ArsipPidanaController::class, 'destroy'])->name('arsip_pidana.destroy');
 });
