@@ -123,10 +123,12 @@ class ArsipPidanaController extends Controller
                 'no_urut'       => 'required|integer|min:1',
                 'tahun_berkas'  => 'required|integer|min:2000',
                 'bulan'         => 'required|string',
+                'jenis_perkara' => 'required|string', // untuk format no berkas
                 'arsip_pidana'  => 'required|file|mimes:pdf|max:2048', // hanya PDF
             ]);
 
-            $noBerkas = "{$request->no_berkas}";
+            // Buat No Berkas dengan format 1.Pid.B.2025.PN Kmn
+            $noBerkas = "{$request->no_urut}.{$request->jenis_perkara}.{$request->tahun_berkas}.PN Kmn";
 
             // 🔎 Cek duplikat
             $duplicate = ArsipPidana::where('no_berkas', $noBerkas)->exists();
@@ -144,11 +146,11 @@ class ArsipPidanaController extends Controller
             // Tentukan path folder berdasarkan tahun & bulan
             $folderPath = "arsip_pidana/{$request->tahun_berkas}/{$request->bulan}";
 
-            // Upload file dengan nama asli
+            // Upload file → nama file sesuai no berkas
             $file = $request->file('arsip_pidana');
             $filePath = $file->storeAs(
                 $folderPath,
-                $file->getClientOriginalName(),
+                "{$noBerkas}.pdf",
                 'public'
             );
 
@@ -186,15 +188,15 @@ class ArsipPidanaController extends Controller
         try {
             // Validasi awal
             $validator = Validator::make($request->all(), [
-                'no_urut'       => 'required|integer|min:1',
-                'tahun_berkas'  => 'required|integer|min:2000',
-                'jenis_perkara' => 'required|string',
-                'bulan'         => 'required|string',
-                'arsip_pidana'  => 'nullable|file|mimes:pdf|max:5120',
+                'no_urut'      => 'required|integer|min:1',
+                'tahun_berkas' => 'required|integer|min:2000',
+                'bulan'        => 'required|string',
+                'jenis_perkara'=> 'required|string', // Pid.B, Pid.Sus, dst
+                'arsip_pidana' => 'nullable|file|mimes:pdf|max:2048',
             ]);
 
-            // Format No Berkas: "123/Pid.B/2024/PN Kmn"
-            $noBerkas = "{$request->no_urut}/{$request->jenis_perkara}/{$request->tahun_berkas}/PN Kmn";
+            // Buat No Berkas baru
+            $noBerkas = "{$request->no_urut}.{$request->jenis_perkara}.{$request->tahun_berkas}.PN Kmn";
 
             // 🔎 Cek duplikat (kecuali record yang sedang diedit)
             $duplicate = ArsipPidana::where('no_berkas', $noBerkas)
@@ -246,10 +248,10 @@ class ArsipPidanaController extends Controller
 
             // Update database
             $arsip_pidana->update([
-                'no_berkas'           => $noBerkas,
-                'bulan'               => $request->bulan,
-                'arsip_pidana_path'   => $filePath,
-                'updated_by'          => Auth::user()->nama_lengkap,
+                'no_berkas'         => $noBerkas,
+                'bulan'             => $request->bulan,
+                'arsip_pidana_path' => $filePath,
+                'updated_by'        => Auth::user()->nama_lengkap,
             ]);
 
             Alert::success('Sukses!', 'Arsip pidana berhasil diperbarui.');

@@ -13,12 +13,13 @@
                 @method('PUT')
 
                 @php
-                    // Contoh no_berkas: "123/Pid.B/2024/PN Kmn"
-                    $parts = explode('/', $arsip_pidana->no_berkas);
+                    // Contoh no_berkas: "1.Pid.LL.2025.PN Kmn"
+                    $parts = explode('.', $arsip_pidana->no_berkas);
                     $noUrut = $parts[0] ?? '';
-                    $jenisPerkara = $parts[1] ?? '';
-                    $tahunBerkas = $parts[2] ?? date('Y');
+                    $jenisPerkara = isset($parts[1], $parts[2]) ? $parts[1] . '.' . $parts[2] : '';
+                    $tahunBerkas = $parts[3] ?? date('Y');
                 @endphp
+
 
                 <!-- Jenis Perkara -->
                 <div class="mb-3">
