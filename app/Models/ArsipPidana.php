@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ArsipPidana extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
     protected $table = 'arsip_pidana';
     protected $guarded = ['id'];

@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 class ArsipGugatan extends Model
 {
     use HasFactory;
-    use SoftDeletes;
 
     protected $table = 'arsip_gugatan';
     protected $guarded = ['id'];

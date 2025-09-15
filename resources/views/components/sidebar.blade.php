@@ -24,11 +24,11 @@
         <x-sidebar-link href="{{ route('daftar_laporan.index') }}" icon="ni ni-books" label="Daftar Laporan" />
         <x-sidebar-link href="{{ route('laporan.index') }}" icon="ni ni-single-copy-04" label="Upload Laporan" />
 
-        <li class="nav-item mt-3">
+        {{-- <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Arsip Berkas</h6>
         </li>
         <x-sidebar-link href="#" icon="ni ni-world-2" label="Daftar Register Arsip" />
-        <x-sidebar-link href="#" icon="ni ni-world-2" label="Daftar Register Peminjaman" />
+        <x-sidebar-link href="#" icon="ni ni-world-2" label="Daftar Register Peminjaman" /> --}}
 
         <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Perdata</h6>
