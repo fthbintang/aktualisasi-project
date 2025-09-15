@@ -11,11 +11,11 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('arsip_gugatan', function (Blueprint $table) {
+        Schema::create('arsip_pidana', function (Blueprint $table) {
             $table->id();
             $table->string('no_berkas')->unique();
             $table->string('bulan');
-            $table->string('arsip_gugatan_path');
+            $table->string('arsip_pidana_path');
             $table->string('created_by');
             $table->string('updated_by')->nullable();
             $table->timestamps();
@@ -27,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('arsip_gugatan');
+        Schema::dropIfExists('arsip_pidana');
     }
 };

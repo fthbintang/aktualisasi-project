@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class ArsipGugatan extends Model
+class ArsipPidana extends Model
 {
     use HasFactory;
 
-    protected $table = 'arsip_gugatan';
+    protected $table = 'arsip_pidana';
     protected $guarded = ['id'];
 }
