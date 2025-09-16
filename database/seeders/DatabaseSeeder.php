@@ -33,41 +33,44 @@ class DatabaseSeeder extends Seeder
         // ArsipPidana::factory(100)->create();
 
         // 2. Buat jenis laporan
-        $jenisLaporans = [
-            'Laporan Offline',
-            'Laporan Online',
-            'Laporan Lain-Lain'
-        ];
+        // $jenisLaporans = [
+        //     'Laporan Offline',
+        //     'Laporan Online',
+        //     'Laporan Lain-Lain'
+        // ];
 
-        foreach ($jenisLaporans as $jenis) {
-            $jenisModel = JenisLaporan::factory()->create([
-                'nama_jenis' => $jenis
-            ]);
+        // foreach ($jenisLaporans as $jenis) {
+        //     $jenisModel = JenisLaporan::factory()->create([
+        //         'nama_jenis' => $jenis
+        //     ]);
 
-            // 3. Buat laporan untuk jenis ini (5 laporan tiap jenis)
-            for ($i = 1; $i <= 5; $i++) {
-                $laporanModel = Laporan::factory()->create([
-                    'jenis_laporan_id' => $jenisModel->id,
-                    'nama_laporan' => $jenis . ' - Laporan ' . $i
-                ]);
+        //     // 3. Buat laporan untuk jenis ini (5 laporan tiap jenis)
+        //     for ($i = 1; $i <= 5; $i++) {
+        //         $laporanModel = Laporan::factory()->create([
+        //             'jenis_laporan_id' => $jenisModel->id,
+        //             'nama_laporan' => $jenis . ' - Laporan ' . $i
+        //         ]);
 
-                // 4. Buat laporan_tahun untuk tahun ini
-                $laporanTahun = LaporanTahun::factory()->create([
-                    'laporan_id' => $laporanModel->id,
-                    'tahun' => date('Y'),
-                ]);
+        //         // Ambil bulan wajib dari laporan ini
+        //         $bulanWajib = json_decode($laporanModel->bulan_wajib, true);
 
-                // 5. Buat upload_laporan random untuk tiap bulan
-                for ($bulan = 1; $bulan <= 12; $bulan++) {
-                    if (rand(0,1)) { // 50% chance sudah diupload
-                        UploadLaporan::factory()->create([
-                            'laporan_tahun_id' => $laporanTahun->id,
-                            'bulan' => $bulan,
-                            'laporan_path' => 'laporan/' . $laporanModel->id . '/file_' . $bulan . '.pdf'
-                        ]);
-                    }
-                }
-            }
-        }
+        //         // 4. Buat laporan_tahun untuk tahun ini
+        //         $laporanTahun = LaporanTahun::factory()->create([
+        //             'laporan_id' => $laporanModel->id,
+        //             'tahun' => date('Y'),
+        //         ]);
+
+        //         // 5. Buat upload_laporan hanya untuk bulan yang wajib
+        //         foreach ($bulanWajib as $bulan) {
+        //             if (rand(0,1)) { // 50% chance sudah diupload
+        //                 UploadLaporan::factory()->create([
+        //                     'laporan_tahun_id' => $laporanTahun->id,
+        //                     'bulan' => $bulan,
+        //                     'laporan_path' => 'laporan/' . $laporanModel->id . '/file_' . $bulan . '.pdf'
+        //                 ]);
+        //             }
+        //         }
+        //     }
+        // }
     }
 }

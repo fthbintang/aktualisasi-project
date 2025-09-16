@@ -15,6 +15,8 @@ return new class extends Migration
             $table->id();
             $table->foreignId('jenis_laporan_id')->constrained('jenis_laporan')->onDelete('cascade');
             $table->string('nama_laporan');
+            $table->string('periode_upload');
+            $table->json('bulan_wajib')->nullable();
             $table->timestamps();
         });
     }

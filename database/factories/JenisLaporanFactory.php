@@ -17,7 +17,7 @@ class JenisLaporanFactory extends Factory
     public function definition(): array
     {
         return [
-            'nama_jenis' => $this->faker->unique()->randomElement([
+            'nama_jenis' => $this->faker->randomElement([
                 'Laporan Offline', 
                 'Laporan Online', 
                 'Laporan Lain-Lain'

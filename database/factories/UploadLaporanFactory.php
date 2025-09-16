@@ -21,9 +21,16 @@ class UploadLaporanFactory extends Factory
 
     public function definition(): array
     {
+        // Buat laporan_tahun beserta laporan
+        $laporanTahun = LaporanTahun::factory()->create();
+
+        // Ambil periode & bulan_wajib dari laporan terkait
+        $laporan = $laporanTahun->laporan;
+        $bulanWajib = json_decode($laporan->bulan_wajib, true);
+
         return [
-            'laporan_tahun_id' => LaporanTahun::factory(),
-            'bulan' => $this->faker->numberBetween(1, 12),
+            'laporan_tahun_id' => $laporanTahun->id,
+            'bulan' => $this->faker->randomElement($bulanWajib),
             'laporan_path' => 'laporan/' . $this->faker->unique()->word . '.pdf',
         ];
     }
