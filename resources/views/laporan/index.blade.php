@@ -40,26 +40,6 @@
                 11 => 'November',
                 12 => 'Desember',
             ];
-
-            // Fungsi helper bulan wajib upload
-            function bulanWajib($periode)
-            {
-                return match ($periode) {
-                    'bulanan' => range(1, 12),
-                    'triwulan' => [3, 6, 9, 12],
-                    'caturwulan' => [4, 8, 12],
-                    'semester' => [6, 12],
-                    'tahunan' => [12],
-                    default => [],
-                };
-            }
-
-            // Warna background sesuai periode
-            function warnaBg($periode)
-            {
-                return 'bg-secondary-subtle'; // semua periode sama warnanya
-            }
-
         @endphp
 
         <div class="card mb-4">
@@ -90,14 +70,22 @@
                                     @foreach ($laporanGroup as $lt)
                                         @php
                                             $laporan = $lt->laporan;
-                                            $periode = $laporan->periode_upload;
-                                            $bulanWajib = bulanWajib($periode);
-                                            $warna = warnaBg($periode);
+
+                                            // Ambil bulan wajib dari field JSON/relasi (diasumsikan tersimpan di laporan->bulan_wajib)
+                                            // Kalau masih string, ubah jadi array
+                                            $bulanWajib = is_array($laporan->bulan_wajib)
+                                                ? $laporan->bulan_wajib
+                                                : json_decode($laporan->bulan_wajib, true) ?? [];
+
+                                            $warna = 'bg-secondary-subtle'; // warna abu-abu
                                         @endphp
                                         <tr id="row-laporan-{{ $laporan->id }}">
                                             <td>
                                                 {{ $laporan->nama_laporan }}
-                                                <br><small class="text-muted">({{ ucfirst($periode) }})</small>
+                                                @if ($laporan->periode_upload)
+                                                    <br><small
+                                                        class="text-muted">({{ ucfirst($laporan->periode_upload) }})</small>
+                                                @endif
                                             </td>
 
                                             {{-- Kolom Bulan --}}
@@ -173,27 +161,29 @@
                                                             </div>
                                                         </div>
                                                     @else
-                                                        <!-- Jika belum ada upload -->
-                                                        <form action="{{ route('upload_laporan.store') }}"
-                                                            method="POST" enctype="multipart/form-data"
-                                                            class="preserve-anchor d-inline"
-                                                            data-anchor="row-laporan-{{ $laporan->id }}">
-                                                            @csrf
-                                                            <input type="hidden" name="bulan"
-                                                                value="{{ $month }}">
-                                                            <input type="hidden" name="laporan_tahun_id"
-                                                                value="{{ $lt->id }}">
-                                                            <input type="file" name="file_laporan"
-                                                                style="display:none" onchange="this.form.submit()"
-                                                                id="file-upload-{{ $laporan->id }}-{{ $month }}">
-                                                            <button type="button"
-                                                                class="btn btn-sm btn-primary rounded-circle shadow-sm"
-                                                                style="width:32px; height:32px; padding:0;"
-                                                                title="Upload Laporan"
-                                                                onclick="document.getElementById('file-upload-{{ $laporan->id }}-{{ $month }}').click()">
-                                                                <i class="bi bi-upload fs-5"></i>
-                                                            </button>
-                                                        </form>
+                                                        @if ($isWajib)
+                                                            <!-- Jika bulan wajib tapi belum ada upload -->
+                                                            <form action="{{ route('upload_laporan.store') }}"
+                                                                method="POST" enctype="multipart/form-data"
+                                                                class="preserve-anchor d-inline"
+                                                                data-anchor="row-laporan-{{ $laporan->id }}">
+                                                                @csrf
+                                                                <input type="hidden" name="bulan"
+                                                                    value="{{ $month }}">
+                                                                <input type="hidden" name="laporan_tahun_id"
+                                                                    value="{{ $lt->id }}">
+                                                                <input type="file" name="file_laporan"
+                                                                    style="display:none" onchange="this.form.submit()"
+                                                                    id="file-upload-{{ $laporan->id }}-{{ $month }}">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-primary rounded-circle shadow-sm"
+                                                                    style="width:32px; height:32px; padding:0;"
+                                                                    title="Upload Laporan"
+                                                                    onclick="document.getElementById('file-upload-{{ $laporan->id }}-{{ $month }}').click()">
+                                                                    <i class="bi bi-upload fs-5"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     @endif
                                                 </td>
                                             @endforeach
