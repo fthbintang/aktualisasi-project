@@ -122,20 +122,28 @@ class DaftarLaporanController extends Controller
         }
     }
 
-    public function update_laporan(Request $request, Laporan $laporan)
+    public function update_laporan(Request $request, $id)
     {
         $validatedData = $request->validate([
-            'nama_laporan' => 'required|string|max:255',
+            'nama_laporan'   => 'required|string|max:255',
+            'periode_upload' => 'nullable|in:Bulanan,Triwulan,Semester,Tahunan',
+            'bulan_wajib'    => 'required|array',
+            'bulan_wajib.*'  => 'integer|min:1|max:12',
         ]);
 
         try {
-            // Update data laporan
-            $laporan->update($validatedData);
+            $laporan = Laporan::findOrFail($id);
 
-            Alert::success('Sukses!', 'Laporan berhasil diupdate');
+            $laporan->update([
+                'nama_laporan'   => $validatedData['nama_laporan'],
+                'periode_upload' => $validatedData['periode_upload'],
+                'bulan_wajib'    => json_encode($validatedData['bulan_wajib']),
+            ]);
+
+            Alert::success('Sukses!', 'Data Laporan Berhasil Diperbarui');
             return redirect()->route('daftar_laporan.index');
         } catch (\Exception $e) {
-            Log::error('Gagal update Laporan', ['error' => $e->getMessage()]);
+            Log::error('Gagal mengupdate laporan', ['error' => $e->getMessage()]);
             Alert::error('Error', 'Terjadi kesalahan saat mengupdate data');
             return back()->withInput();
         }
