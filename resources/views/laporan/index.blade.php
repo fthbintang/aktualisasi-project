@@ -203,12 +203,40 @@
                                         </tr>
                                     @endforeach
                                 @endforeach
+                                {{-- Tambahkan baris tombol download zip per bulan --}}
+                                <tr class="table-info">
+                                    <td><b>Download Semua Laporan</b></td>
+                                    @foreach (range(1, 12) as $month)
+                                        <td class="text-center">
+                                            @php
+                                                $adaLaporan = \App\Models\UploadLaporan::where('bulan', $month)
+                                                    ->whereHas('laporan_tahun', function ($q) use ($tahun) {
+                                                        $q->where('tahun', $tahun);
+                                                    })
+                                                    ->exists();
+                                            @endphp
+
+                                            @if ($adaLaporan)
+                                                <a href="{{ route('laporan.downloadZip', ['tahun' => $tahun, 'bulan' => $month]) }}"
+                                                    class="btn btn-sm btn-success"
+                                                    title="Download semua laporan bulan {{ $bulanIndo[$month] }}">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                    @endforeach
+                                    <td></td>
+                                </tr>
+
                             </tbody>
                         </table>
                     </div>
                 @else
                     <div class="alert alert-info">Tidak ada laporan.</div>
                 @endif
+
             </div>
         </div>
 
