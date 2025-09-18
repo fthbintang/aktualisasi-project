@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use ZipArchive;
 use App\Models\Laporan;
 use App\Models\JenisLaporan;
 use App\Models\LaporanTahun;
@@ -239,6 +240,56 @@ class LaporanController extends Controller
             Alert::error('Gagal!', 'Terjadi kesalahan saat menghapus laporan: ' . $e->getMessage());
             return back();
         }
+    }
+
+    public function downloadZip($tahun, $bulan)
+    {
+        // Mapping angka bulan ke nama bulan Indo
+        $bulanIndo = [
+            1 => 'Januari',
+            2 => 'Februari',
+            3 => 'Maret',
+            4 => 'April',
+            5 => 'Mei',
+            6 => 'Juni',
+            7 => 'Juli',
+            8 => 'Agustus',
+            9 => 'September',
+            10 => 'Oktober',
+            11 => 'November',
+            12 => 'Desember',
+        ];
+
+        // Ambil semua upload laporan berdasarkan relasi ke laporan_tahun
+        $uploads = UploadLaporan::where('bulan', $bulan)
+            ->whereHas('laporan_tahun', function ($q) use ($tahun) {
+                $q->where('tahun', $tahun);
+            })
+            ->get();
+
+        if ($uploads->isEmpty()) {
+            return back()->with('error', 'Tidak ada laporan untuk bulan ini.');
+        }
+
+        // Ambil nama bulan (default fallback angka jika tidak ada)
+        $namaBulan = $bulanIndo[$bulan] ?? $bulan;
+
+        // Nama file zip
+        $zipFileName = "laporan_kepaniteraan_hukum-{$tahun}-{$namaBulan}.zip";
+        $zipPath = storage_path("app/public/{$zipFileName}");
+
+        $zip = new \ZipArchive;
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === TRUE) {
+            foreach ($uploads as $upload) {
+                $filePath = storage_path("app/public/" . $upload->laporan_path);
+                if (file_exists($filePath)) {
+                    $zip->addFile($filePath, basename($upload->laporan_path));
+                }
+            }
+            $zip->close();
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
 }

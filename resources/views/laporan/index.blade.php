@@ -25,6 +25,23 @@
         </div>
 
         {{-- Tabel Laporan --}}
+        @php
+            $bulanIndo = [
+                1 => 'Januari',
+                2 => 'Februari',
+                3 => 'Maret',
+                4 => 'April',
+                5 => 'Mei',
+                6 => 'Juni',
+                7 => 'Juli',
+                8 => 'Agustus',
+                9 => 'September',
+                10 => 'Oktober',
+                11 => 'November',
+                12 => 'Desember',
+            ];
+        @endphp
+
         <div class="card mb-4">
             <div class="card-header">
                 <h5 class="mb-0">Daftar Laporan</h5>
@@ -33,26 +50,10 @@
                 @if ($laporanGrouped->count() > 0)
                     @php $colspan = 2 + 12; @endphp
                     <div class="table-responsive">
-                        <table class="table table-bordered table-striped align-middle">
+                        <table class="table table-bordered align-middle">
                             <thead>
                                 <tr>
                                     <th>Nama Laporan</th>
-                                    @php
-                                        $bulanIndo = [
-                                            1 => 'Januari',
-                                            2 => 'Februari',
-                                            3 => 'Maret',
-                                            4 => 'April',
-                                            5 => 'Mei',
-                                            6 => 'Juni',
-                                            7 => 'Juli',
-                                            8 => 'Agustus',
-                                            9 => 'September',
-                                            10 => 'Oktober',
-                                            11 => 'November',
-                                            12 => 'Desember',
-                                        ];
-                                    @endphp
                                     @foreach (range(1, 12) as $month)
                                         <th class="text-center">{{ $bulanIndo[$month] }}</th>
                                     @endforeach
@@ -67,23 +68,42 @@
                                         </th>
                                     </tr>
                                     @foreach ($laporanGroup as $lt)
-                                        @php $laporan = $lt->laporan; @endphp
+                                        @php
+                                            $laporan = $lt->laporan;
+
+                                            // Ambil bulan wajib dari field JSON/relasi (diasumsikan tersimpan di laporan->bulan_wajib)
+                                            // Kalau masih string, ubah jadi array
+                                            $bulanWajib = is_array($laporan->bulan_wajib)
+                                                ? $laporan->bulan_wajib
+                                                : json_decode($laporan->bulan_wajib, true) ?? [];
+
+                                            $warna = 'bg-secondary-subtle'; // warna abu-abu
+                                        @endphp
                                         <tr id="row-laporan-{{ $laporan->id }}">
-                                            <td>{{ $laporan->nama_laporan }}</td>
+                                            <td>
+                                                {{ $laporan->nama_laporan }}
+                                                @if ($laporan->periode_upload)
+                                                    <br><small
+                                                        class="text-muted">({{ ucfirst($laporan->periode_upload) }})</small>
+                                                @endif
+                                            </td>
 
                                             {{-- Kolom Bulan --}}
                                             @foreach (range(1, 12) as $month)
-                                                @php $uploaded = $lt->upload_laporan->firstWhere('bulan', $month); @endphp
-                                                <td class="text-center">
+                                                @php
+                                                    $uploaded = $lt->upload_laporan->firstWhere('bulan', $month);
+                                                    $isWajib = in_array($month, $bulanWajib);
+                                                @endphp
+                                                <td class="text-center {{ $isWajib ? $warna : '' }}">
                                                     @if ($uploaded)
-                                                        <!-- Ikon centang bisa diklik untuk buka modal -->
+                                                        <!-- Ikon centang -->
                                                         <span class="bg-success text-white px-2 py-1 rounded"
                                                             style="cursor:pointer;" data-bs-toggle="modal"
                                                             data-bs-target="#modalLaporan-{{ $laporan->id }}-{{ $month }}">
                                                             ✔
                                                         </span>
 
-                                                        <!-- Modal -->
+                                                        <!-- Modal sama seperti sebelumnya -->
                                                         <div class="modal fade"
                                                             id="modalLaporan-{{ $laporan->id }}-{{ $month }}"
                                                             tabindex="-1"
@@ -94,22 +114,14 @@
                                                                     <div class="modal-header">
                                                                         <h5 class="modal-title"
                                                                             id="modalLabel-{{ $laporan->id }}-{{ $month }}">
-                                                                            Aksi Laporan Bulan {{ $month }}
+                                                                            Aksi Laporan Bulan {{ $bulanIndo[$month] }}
                                                                         </h5>
                                                                         <button type="button" class="btn-close"
                                                                             data-bs-dismiss="modal"
                                                                             aria-label="Tutup"></button>
                                                                     </div>
                                                                     <div class="modal-body text-center">
-                                                                        @php
-                                                                            $uploaded = $lt->upload_laporan->firstWhere(
-                                                                                'bulan',
-                                                                                $month,
-                                                                            );
-                                                                        @endphp
-
                                                                         @if ($uploaded)
-                                                                            <!-- Tombol Preview -->
                                                                             <a href="{{ asset('storage/' . $uploaded->laporan_path) }}"
                                                                                 target="_blank"
                                                                                 class="btn btn-primary w-100 mb-2">
@@ -117,7 +129,6 @@
                                                                             </a>
                                                                         @endif
 
-                                                                        <!-- Tombol Edit -->
                                                                         <form
                                                                             action="{{ route('upload_laporan.update', $uploaded->id) }}"
                                                                             method="POST" enctype="multipart/form-data"
@@ -135,7 +146,6 @@
                                                                             </button>
                                                                         </form>
 
-                                                                        <!-- Tombol Hapus -->
                                                                         <form
                                                                             action="{{ route('upload_laporan.delete', $uploaded->id) }}"
                                                                             method="POST" class="w-100 form-delete">
@@ -146,28 +156,34 @@
                                                                                 Hapus Unggahan
                                                                             </button>
                                                                         </form>
-
                                                                     </div>
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     @else
-                                                        <!-- Jika belum ada upload -->
-                                                        <form action="{{ route('upload_laporan.store') }}"
-                                                            method="POST" enctype="multipart/form-data"
-                                                            class="preserve-anchor"
-                                                            data-anchor="row-laporan-{{ $laporan->id }}">
-                                                            @csrf
-                                                            <input type="hidden" name="bulan"
-                                                                value="{{ $month }}">
-                                                            <input type="hidden" name="laporan_tahun_id"
-                                                                value="{{ $lt->id }}">
-                                                            <input type="file" name="file_laporan"
-                                                                style="display:none" onchange="this.form.submit()"
-                                                                id="file-upload-{{ $laporan->id }}-{{ $month }}">
-                                                            <span class="text-danger fw-bold" style="cursor:pointer;"
-                                                                onclick="document.getElementById('file-upload-{{ $laporan->id }}-{{ $month }}').click()">–</span>
-                                                        </form>
+                                                        @if ($isWajib)
+                                                            <!-- Jika bulan wajib tapi belum ada upload -->
+                                                            <form action="{{ route('upload_laporan.store') }}"
+                                                                method="POST" enctype="multipart/form-data"
+                                                                class="preserve-anchor d-inline"
+                                                                data-anchor="row-laporan-{{ $laporan->id }}">
+                                                                @csrf
+                                                                <input type="hidden" name="bulan"
+                                                                    value="{{ $month }}">
+                                                                <input type="hidden" name="laporan_tahun_id"
+                                                                    value="{{ $lt->id }}">
+                                                                <input type="file" name="file_laporan"
+                                                                    style="display:none" onchange="this.form.submit()"
+                                                                    id="file-upload-{{ $laporan->id }}-{{ $month }}">
+                                                                <button type="button"
+                                                                    class="btn btn-sm btn-primary rounded-circle shadow-sm"
+                                                                    style="width:32px; height:32px; padding:0;"
+                                                                    title="Upload Laporan"
+                                                                    onclick="document.getElementById('file-upload-{{ $laporan->id }}-{{ $month }}').click()">
+                                                                    <i class="bi bi-upload fs-5"></i>
+                                                                </button>
+                                                            </form>
+                                                        @endif
                                                     @endif
                                                 </td>
                                             @endforeach
@@ -187,12 +203,40 @@
                                         </tr>
                                     @endforeach
                                 @endforeach
+                                {{-- Tambahkan baris tombol download zip per bulan --}}
+                                <tr class="table-info">
+                                    <td><b>Download Semua Laporan</b></td>
+                                    @foreach (range(1, 12) as $month)
+                                        <td class="text-center">
+                                            @php
+                                                $adaLaporan = \App\Models\UploadLaporan::where('bulan', $month)
+                                                    ->whereHas('laporan_tahun', function ($q) use ($tahun) {
+                                                        $q->where('tahun', $tahun);
+                                                    })
+                                                    ->exists();
+                                            @endphp
+
+                                            @if ($adaLaporan)
+                                                <a href="{{ route('laporan.downloadZip', ['tahun' => $tahun, 'bulan' => $month]) }}"
+                                                    class="btn btn-sm btn-success"
+                                                    title="Download semua laporan bulan {{ $bulanIndo[$month] }}">
+                                                    <i class="bi bi-download"></i>
+                                                </a>
+                                            @else
+                                                -
+                                            @endif
+                                        </td>
+                                    @endforeach
+                                    <td></td>
+                                </tr>
+
                             </tbody>
                         </table>
                     </div>
                 @else
                     <div class="alert alert-info">Tidak ada laporan.</div>
                 @endif
+
             </div>
         </div>
 

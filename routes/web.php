@@ -35,6 +35,9 @@ Route::middleware('auth')->group(function () {
     Route::post('/dashboard/laporan/laporan_tahun/store', [LaporanController::class, 'store'])->name('laporan_tahun.store');
     Route::delete('/dashboard/laporan/laporan_tahun/{laporan}/{tahun}', [LaporanController::class, 'destroy'])->name('laporan_tahun.destroy');
 
+    Route::get('/dashboard/laporan/{tahun}/{bulan}/download', [LaporanController::class, 'downloadZip'])->name('laporan.downloadZip');
+
+
     Route::post('/dashboard/laporan/upload_laporan', [LaporanController::class, 'upload_laporan'])->name('upload_laporan.store');
     Route::put('/dashboard/laporan/update_laporan/{uploadLaporan}', [LaporanController::class, 'update_laporan'])->name('upload_laporan.update');
     Route::delete('/dashboard/laporan/upload_laporan/{uploadLaporan}', [LaporanController::class, 'delete_laporan'])->name('upload_laporan.delete');

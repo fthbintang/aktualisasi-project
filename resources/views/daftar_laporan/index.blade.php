@@ -53,7 +53,9 @@
                                             @foreach ($jenis->laporan as $laporan)
                                                 <tr>
                                                     <td></td>
-                                                    <td>{{ $laporan->nama_laporan }}</td>
+                                                    <td>{{ $laporan->nama_laporan }}
+                                                        ({{ $laporan->periode_upload ?? 'Tanpa Periode' }})
+                                                    </td>
                                                     <td>
                                                         <a href="{{ route('daftar_laporan.edit_laporan', $laporan->id) }}"
                                                             class="btn btn-sm btn-warning">Edit</a>
