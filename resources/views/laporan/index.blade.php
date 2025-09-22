@@ -17,10 +17,12 @@
                     </select>
                 </form>
 
-                {{-- Tombol tambah laporan --}}
-                <a href="{{ route('laporan_tahun.create', ['tahun' => $tahun]) }}" class="btn btn-primary">
-                    Tambah Laporan Tahun Ini
-                </a>
+                @can('Kepaniteraan Hukum')
+                    {{-- Tombol tambah laporan --}}
+                    <a href="{{ route('laporan_tahun.create', ['tahun' => $tahun]) }}" class="btn btn-primary">
+                        Tambah Laporan Tahun Ini
+                    </a>
+                @endcan
             </div>
         </div>
 
@@ -57,7 +59,9 @@
                                     @foreach (range(1, 12) as $month)
                                         <th class="text-center">{{ $bulanIndo[$month] }}</th>
                                     @endforeach
-                                    <th class="text-center">#</th>
+                                    @can('Kepaniteraan Hukum')
+                                        <th class="text-center">#</th>
+                                    @endcan
                                 </tr>
                             </thead>
                             <tbody>
@@ -96,110 +100,122 @@
                                                 @endphp
                                                 <td class="text-center {{ $isWajib ? $warna : '' }}">
                                                     @if ($uploaded)
-                                                        <!-- Ikon centang -->
-                                                        <span class="bg-success text-white px-2 py-1 rounded"
-                                                            style="cursor:pointer;" data-bs-toggle="modal"
-                                                            data-bs-target="#modalLaporan-{{ $laporan->id }}-{{ $month }}">
-                                                            ✔
-                                                        </span>
+                                                        @can('Kepaniteraan Hukum')
+                                                            <!-- Ikon centang -->
+                                                            <span class="bg-success text-white px-2 py-1 rounded"
+                                                                style="cursor:pointer;" data-bs-toggle="modal"
+                                                                data-bs-target="#modalLaporan-{{ $laporan->id }}-{{ $month }}">
+                                                                ✔
+                                                            </span>
 
-                                                        <!-- Modal sama seperti sebelumnya -->
-                                                        <div class="modal fade"
-                                                            id="modalLaporan-{{ $laporan->id }}-{{ $month }}"
-                                                            tabindex="-1"
-                                                            aria-labelledby="modalLabel-{{ $laporan->id }}-{{ $month }}"
-                                                            aria-hidden="true">
-                                                            <div class="modal-dialog modal-dialog-centered">
-                                                                <div class="modal-content">
-                                                                    <div class="modal-header">
-                                                                        <h5 class="modal-title"
-                                                                            id="modalLabel-{{ $laporan->id }}-{{ $month }}">
-                                                                            Aksi Laporan Bulan {{ $bulanIndo[$month] }}
-                                                                        </h5>
-                                                                        <button type="button" class="btn-close"
-                                                                            data-bs-dismiss="modal"
-                                                                            aria-label="Tutup"></button>
-                                                                    </div>
-                                                                    <div class="modal-body text-center">
-                                                                        @if ($uploaded)
-                                                                            <a href="{{ asset('storage/' . $uploaded->laporan_path) }}"
-                                                                                target="_blank"
-                                                                                class="btn btn-primary w-100 mb-2">
-                                                                                Preview Laporan
-                                                                            </a>
-                                                                        @endif
+                                                            <!-- Modal sama seperti sebelumnya -->
+                                                            <div class="modal fade"
+                                                                id="modalLaporan-{{ $laporan->id }}-{{ $month }}"
+                                                                tabindex="-1"
+                                                                aria-labelledby="modalLabel-{{ $laporan->id }}-{{ $month }}"
+                                                                aria-hidden="true">
+                                                                <div class="modal-dialog modal-dialog-centered">
+                                                                    <div class="modal-content">
+                                                                        <div class="modal-header">
+                                                                            <h5 class="modal-title"
+                                                                                id="modalLabel-{{ $laporan->id }}-{{ $month }}">
+                                                                                Aksi Laporan Bulan {{ $bulanIndo[$month] }}
+                                                                            </h5>
+                                                                            <button type="button" class="btn-close"
+                                                                                data-bs-dismiss="modal"
+                                                                                aria-label="Tutup"></button>
+                                                                        </div>
+                                                                        <div class="modal-body text-center">
+                                                                            @if ($uploaded)
+                                                                                <a href="{{ asset('storage/' . $uploaded->laporan_path) }}"
+                                                                                    target="_blank"
+                                                                                    class="btn btn-primary w-100 mb-2">
+                                                                                    Preview Laporan
+                                                                                </a>
+                                                                            @endif
 
-                                                                        <form
-                                                                            action="{{ route('upload_laporan.update', $uploaded->id) }}"
-                                                                            method="POST" enctype="multipart/form-data"
-                                                                            class="w-100 mb-2">
-                                                                            @csrf
-                                                                            @method('PUT')
-                                                                            <input type="file" name="file_laporan"
-                                                                                style="display:none"
-                                                                                onchange="this.form.submit()"
-                                                                                id="file-edit-{{ $laporan->id }}-{{ $month }}">
-                                                                            <button type="button"
-                                                                                class="btn btn-warning w-100"
-                                                                                onclick="document.getElementById('file-edit-{{ $laporan->id }}-{{ $month }}').click()">
-                                                                                Edit Unggahan
-                                                                            </button>
-                                                                        </form>
+                                                                            <form
+                                                                                action="{{ route('upload_laporan.update', $uploaded->id) }}"
+                                                                                method="POST" enctype="multipart/form-data"
+                                                                                class="w-100 mb-2">
+                                                                                @csrf
+                                                                                @method('PUT')
+                                                                                <input type="file" name="file_laporan"
+                                                                                    style="display:none"
+                                                                                    onchange="this.form.submit()"
+                                                                                    id="file-edit-{{ $laporan->id }}-{{ $month }}">
+                                                                                <button type="button"
+                                                                                    class="btn btn-warning w-100"
+                                                                                    onclick="document.getElementById('file-edit-{{ $laporan->id }}-{{ $month }}').click()">
+                                                                                    Edit Unggahan
+                                                                                </button>
+                                                                            </form>
 
-                                                                        <form
-                                                                            action="{{ route('upload_laporan.delete', $uploaded->id) }}"
-                                                                            method="POST" class="w-100 form-delete">
-                                                                            @csrf
-                                                                            @method('DELETE')
-                                                                            <button type="button"
-                                                                                class="btn btn-danger w-100 btn-delete">
-                                                                                Hapus Unggahan
-                                                                            </button>
-                                                                        </form>
+                                                                            <form
+                                                                                action="{{ route('upload_laporan.delete', $uploaded->id) }}"
+                                                                                method="POST" class="w-100 form-delete">
+                                                                                @csrf
+                                                                                @method('DELETE')
+                                                                                <button type="button"
+                                                                                    class="btn btn-danger w-100 btn-delete">
+                                                                                    Hapus Unggahan
+                                                                                </button>
+                                                                            </form>
+                                                                        </div>
                                                                     </div>
                                                                 </div>
                                                             </div>
-                                                        </div>
+                                                        @else
+                                                            <a href="{{ asset('storage/' . $uploaded->laporan_path) }}"
+                                                                target="_blank" class="btn btn-primary">
+                                                                Lihat
+                                                            </a>
+                                                        @endcan
                                                     @else
-                                                        @if ($isWajib)
-                                                            <!-- Jika bulan wajib tapi belum ada upload -->
-                                                            <form action="{{ route('upload_laporan.store') }}"
-                                                                method="POST" enctype="multipart/form-data"
-                                                                class="preserve-anchor d-inline"
-                                                                data-anchor="row-laporan-{{ $laporan->id }}">
-                                                                @csrf
-                                                                <input type="hidden" name="bulan"
-                                                                    value="{{ $month }}">
-                                                                <input type="hidden" name="laporan_tahun_id"
-                                                                    value="{{ $lt->id }}">
-                                                                <input type="file" name="file_laporan"
-                                                                    style="display:none" onchange="this.form.submit()"
-                                                                    id="file-upload-{{ $laporan->id }}-{{ $month }}">
-                                                                <button type="button"
-                                                                    class="btn btn-sm btn-primary rounded-circle shadow-sm"
-                                                                    style="width:32px; height:32px; padding:0;"
-                                                                    title="Upload Laporan"
-                                                                    onclick="document.getElementById('file-upload-{{ $laporan->id }}-{{ $month }}').click()">
-                                                                    <i class="bi bi-upload fs-5"></i>
-                                                                </button>
-                                                            </form>
-                                                        @endif
+                                                        @can('Kepaniteraan Hukum')
+                                                            @if ($isWajib)
+                                                                <!-- Jika bulan wajib tapi belum ada upload -->
+                                                                <form action="{{ route('upload_laporan.store') }}"
+                                                                    method="POST" enctype="multipart/form-data"
+                                                                    class="preserve-anchor d-inline"
+                                                                    data-anchor="row-laporan-{{ $laporan->id }}">
+                                                                    @csrf
+                                                                    <input type="hidden" name="bulan"
+                                                                        value="{{ $month }}">
+                                                                    <input type="hidden" name="laporan_tahun_id"
+                                                                        value="{{ $lt->id }}">
+                                                                    <input type="file" name="file_laporan"
+                                                                        style="display:none" onchange="this.form.submit()"
+                                                                        id="file-upload-{{ $laporan->id }}-{{ $month }}">
+                                                                    <button type="button"
+                                                                        class="btn btn-sm btn-primary rounded-circle shadow-sm"
+                                                                        style="width:32px; height:32px; padding:0;"
+                                                                        title="Upload Laporan"
+                                                                        onclick="document.getElementById('file-upload-{{ $laporan->id }}-{{ $month }}').click()">
+                                                                        <i class="bi bi-upload fs-5"></i>
+                                                                    </button>
+                                                                </form>
+                                                            @endif
+                                                        @else
+                                                            -
+                                                        @endcan
                                                     @endif
                                                 </td>
                                             @endforeach
-
-                                            {{-- Kolom Hapus --}}
-                                            <td class="text-center">
-                                                <form
-                                                    action="{{ route('laporan_tahun.destroy', [$laporan->id, $tahun]) }}"
-                                                    method="POST" class="d-inline form-delete">
-                                                    @csrf
-                                                    @method('DELETE')
-                                                    <button type="button" class="btn btn-danger btn-sm btn-delete">
-                                                        <i class="bi bi-trash"></i>
-                                                    </button>
-                                                </form>
-                                            </td>
+                                            @can('Kepaniteraan Hukum')
+                                                {{-- Kolom Hapus --}}
+                                                <td class="text-center">
+                                                    <form
+                                                        action="{{ route('laporan_tahun.destroy', [$laporan->id, $tahun]) }}"
+                                                        method="POST" class="d-inline form-delete">
+                                                        @csrf
+                                                        @method('DELETE')
+                                                        <button type="button" class="btn btn-danger btn-sm btn-delete">
+                                                            <i class="bi bi-trash"></i>
+                                                        </button>
+                                                    </form>
+                                                </td>
+                                            @endcan
                                         </tr>
                                     @endforeach
                                 @endforeach
