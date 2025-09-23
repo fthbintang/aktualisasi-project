@@ -8,9 +8,11 @@
                             <div class="col-sm-8">
                                 <h6>Data {{ end($breadcrumbs) }}</h6>
                             </div>
-                            <div class="col-sm-4 d-flex justify-content-end">
-                                <a href="{{ route('arsip_gugatan.create') }}" class="btn btn-success">Tambah Data</a>
-                            </div>
+                            @can('Kepaniteraan Hukum')
+                                <div class="col-sm-4 d-flex justify-content-end">
+                                    <a href="{{ route('arsip_gugatan.create') }}" class="btn btn-success">Tambah Data</a>
+                                </div>
+                            @endcan
                         </div>
                     </div>
                     <div class="card-body px-3 pt-3 pb-2">
@@ -26,7 +28,9 @@
                                         <th>File</th>
                                         <th>Diupload Oleh</th>
                                         <th>Diperbarui Oleh</th>
-                                        <th>Aksi</th>
+                                        @can('Kepaniteraan Hukum')
+                                            <th>Aksi</th>
+                                        @endcan
                                     </tr>
                                 </thead>
                             </table>
@@ -85,13 +89,15 @@
                         name: 'updated_by',
                         className: "text-center"
                     },
-                    {
-                        data: 'aksi',
-                        name: 'aksi',
-                        className: "text-center",
-                        orderable: false,
-                        searchable: false
-                    }
+                    @can('Kepaniteraan Hukum')
+                        {
+                            data: 'aksi',
+                            name: 'aksi',
+                            className: "text-center",
+                            orderable: false,
+                            searchable: false
+                        }
+                    @endcan
                 ],
                 dom: '<"row mb-2"<"col-sm-6"l><"col-sm-6 text-end"f>>t<"row mt-2"<"col-sm-6"i><"col-sm-6 text-end"p>>',
                 language: {

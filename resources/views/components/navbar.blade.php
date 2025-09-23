@@ -23,9 +23,11 @@
 
         <div class="collapse navbar-collapse mt-sm-0 mt-2 me-md-0 me-sm-4 justify-content-end" id="navbar">
             <ul class="navbar-nav d-flex align-items-center">
-                <li class="nav-item d-flex align-items-center me-3 text-white">
-                    Halo, {{ auth()->user()->nama_lengkap }}
+                <li class="nav-item d-flex flex-column align-items-start me-3 text-white">
+                    <span>Halo, {{ auth()->user()->nama_lengkap }}</span>
+                    <small class="text-white-50">{{ auth()->user()->role }}</small>
                 </li>
+
                 <!-- LOGOUT -->
                 <li class="nav-item d-flex align-items-center">
                     <form action="{{ route('logout') }}" method="POST" class="d-inline">

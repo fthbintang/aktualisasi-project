@@ -83,20 +83,25 @@ class ArsipPidanaController extends Controller
             // Pastikan updated_by selalu ada (kalau null diganti '-')
             $item->updated_by = $item->updated_by ?? '-';
 
-            $editUrl = route('arsip_pidana.edit', $item->id);
-            $deleteUrl = route('arsip_pidana.destroy', $item->id);
+            if (Auth::check() && Auth::user()->role === 'Kepaniteraan Hukum') {
+                $editUrl = route('arsip_pidana.edit', $item->id);
+                $deleteUrl = route('arsip_pidana.destroy', $item->id);
 
-            // $editUrl = '#';
-            // $deleteUrl = '#';
+                // $editUrl = '#';
+                // $deleteUrl = '#';
 
-            $item->aksi = '
-                <a href="'.$editUrl.'" class="text-warning font-weight-bold text-xs me-2">Edit</a>
-                |
-                <form action="'.$deleteUrl.'" method="POST" class="d-inline form-delete">
-                    '.csrf_field().method_field('DELETE').'
-                    <button type="button" class="btn btn-link p-0 m-0 text-danger text-xs btn-delete">Hapus</button>
-                </form>
-            ';
+                $item->aksi = '
+                    <a href="'.$editUrl.'" class="text-warning font-weight-bold text-xs me-2">Edit</a>
+                    |
+                    <form action="'.$deleteUrl.'" method="POST" class="d-inline form-delete">
+                        '.csrf_field().method_field('DELETE').'
+                        <button type="button" class="btn btn-link p-0 m-0 text-danger text-xs btn-delete">Hapus</button>
+                    </form>
+                ';
+            } else {
+                $item->aksi = '-';
+            }
+
             return $item;
         });
 

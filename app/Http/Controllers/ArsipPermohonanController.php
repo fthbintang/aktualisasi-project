@@ -79,20 +79,26 @@ class ArsipPermohonanController extends Controller
             }
             $item->arsip_permohonan_path = '<a href="'.$url.'" target="_blank">'.$icon.' Lihat File</a>';
 
-            // Pastikan updated_by selalu ada (kalau null diganti '-')
+            // updated_by null diganti '-'
             $item->updated_by = $item->updated_by ?? '-';
 
-            $editUrl = route('arsip_permohonan.edit', $item->id);
-            $deleteUrl = route('arsip_permohonan.destroy', $item->id);
+            // Aksi khusus Kepaniteraan Hukum
+            if (Auth::check() && Auth::user()->role === 'Kepaniteraan Hukum') {
+                $editUrl = route('arsip_permohonan.edit', $item->id);
+                $deleteUrl = route('arsip_permohonan.destroy', $item->id);
 
-            $item->aksi = '
-                <a href="'.$editUrl.'" class="text-warning font-weight-bold text-xs me-2">Edit</a>
-                |
-                <form action="'.$deleteUrl.'" method="POST" class="d-inline form-delete">
-                    '.csrf_field().method_field('DELETE').'
-                    <button type="button" class="btn btn-link p-0 m-0 text-danger text-xs btn-delete">Hapus</button>
-                </form>
-            ';
+                $item->aksi = '
+                    <a href="'.$editUrl.'" class="text-warning font-weight-bold text-xs me-2">Edit</a>
+                    |
+                    <form action="'.$deleteUrl.'" method="POST" class="d-inline form-delete">
+                        '.csrf_field().method_field('DELETE').'
+                        <button type="button" class="btn btn-link p-0 m-0 text-danger text-xs btn-delete">Hapus</button>
+                    </form>
+                ';
+            } else {
+                $item->aksi = '-';
+            }
+
             return $item;
         });
 
