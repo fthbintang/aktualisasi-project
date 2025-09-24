@@ -31,6 +31,16 @@
             <x-sidebar-link href="{{ route('laporan.index') }}" icon="ni ni-single-copy-04" label="Laporan Hukum" />
         @endcan
 
+        @can('Kepaniteraan Hukum')
+            <li class="nav-item mt-3">
+                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Laporan Kepaniteraan Perdata</h6>
+            </li>
+            <x-sidebar-link href="{{ route('laporan_perdata.index') }}" icon="ni ni-single-copy-04"
+                label="Upload Laporan" />
+            {{-- @else --}}
+            {{-- <x-sidebar-link href="{{ route('laporan.index') }}" icon="ni ni-single-copy-04" label="Laporan Perdata" /> --}}
+        @endcan
+
         {{-- <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Arsip Berkas</h6>
         </li>

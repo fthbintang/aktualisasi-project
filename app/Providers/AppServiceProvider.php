@@ -2,6 +2,7 @@
 
 namespace App\Providers;
 
+use Carbon\Carbon;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
@@ -39,5 +40,7 @@ class AppServiceProvider extends ServiceProvider
         Gate::define('Ketua PN', function ($user) {
             return $user->role === 'Ketua PN';
         });
+
+        Carbon::setLocale('id');
     }
 }
