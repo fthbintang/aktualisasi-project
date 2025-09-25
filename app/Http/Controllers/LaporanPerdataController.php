@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use ZipArchive;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -269,6 +270,32 @@ class LaporanPerdataController extends Controller
             Alert::error('Gagal!', 'Terjadi kesalahan saat menghapus laporan: ' . $e->getMessage());
             return back();
         }
+    }
+
+    public function downloadAll()
+    {
+        $laporanDetails = LaporanPerdataDetail::all(); // bisa difilter sesuai kebutuhan
+
+        if ($laporanDetails->isEmpty()) {
+            return back()->with('error', 'Tidak ada laporan untuk diunduh.');
+        }
+
+        $zipFileName = 'laporan_perdata_' . now()->format('Y_m_d_His') . '.zip';
+        $zipPath = storage_path('app/public/' . $zipFileName);
+
+        $zip = new ZipArchive;
+        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+            foreach ($laporanDetails as $detail) {
+                if ($detail->laporan_perdata_path && Storage::disk('public')->exists($detail->laporan_perdata_path)) {
+                    $filePath = Storage::disk('public')->path($detail->laporan_perdata_path);
+                    $fileName = basename($filePath); // bisa diganti custom nama
+                    $zip->addFile($filePath, $fileName);
+                }
+            }
+            $zip->close();
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 
 }

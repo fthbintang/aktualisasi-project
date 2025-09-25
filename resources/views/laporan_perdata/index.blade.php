@@ -1,42 +1,45 @@
 <x-layout :breadcrumbs="$breadcrumbs">
     <div class="page-heading ms-3">
-        <h3 class="text-white">Upload Laporan Perdata Bulanan</h3>
-        <p class="text-white">Pilih bulan & tahun, lalu upload laporan perdata yang akan dikirim ke hukum.</p>
+        @can('Kepaniteraan Perdata')
+            <h3 class="text-white">Upload Laporan Perdata Bulanan</h3>
+            <p class="text-white">Pilih bulan & tahun, lalu upload laporan perdata yang akan dikirim ke hukum.</p>
+        @else
+            <h3 class="text-white">Laporan Perdata Bulanan</h3>
+            <p class="text-white">Silakan pilih bulan & tahun untuk melihat laporan perdata yang telah diunggah.</p>
+        @endcan
     </div>
 
+    {{-- Filter Bulan & Tahun --}}
+    <div class="card mb-3">
+        <div class="card-body">
+            <form method="GET" action="{{ route('laporan_perdata.index') }}" class="row g-2">
+                <div class="col-md-4">
+                    <label for="bulan" class="form-label">Bulan</label>
+                    <select name="bulan" id="bulan" class="form-select">
+                        @foreach (range(1, 12) as $b)
+                            <option value="{{ $b }}"
+                                {{ $b == request('bulan', now()->month) ? 'selected' : '' }}>
+                                {{ \Carbon\Carbon::create()->month($b)->translatedFormat('F') }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="tahun" class="form-label">Tahun</label>
+                    <input type="number" name="tahun" id="tahun" class="form-control"
+                        value="{{ request('tahun', now()->year) }}">
+                </div>
 
-    <div class="page-content">
-        {{-- Filter Bulan & Tahun --}}
-        <div class="card mb-3">
-            <div class="card-body">
-                <form method="GET" action="{{ route('laporan_perdata.index') }}" class="row g-2">
-                    <div class="col-md-4">
-                        <label for="bulan" class="form-label">Bulan</label>
-                        <select name="bulan" id="bulan" class="form-select">
-                            @foreach (range(1, 12) as $b)
-                                <option value="{{ $b }}"
-                                    {{ $b == request('bulan', now()->month) ? 'selected' : '' }}>
-                                    {{ \Carbon\Carbon::create()->month($b)->translatedFormat('F') }}
-                                </option>
-                            @endforeach
-                        </select>
-                    </div>
-                    <div class="col-md-3">
-                        <label for="tahun" class="form-label">Tahun</label>
-                        <input type="number" name="tahun" id="tahun" class="form-control"
-                            value="{{ request('tahun', now()->year) }}">
-                    </div>
-
-                    <div class="col-12 mt-3">
-                        <button type="submit" class="btn btn-primary w-auto">
-                            <i class="bi bi-search"></i> Tampilkan
-                        </button>
-                    </div>
-                </form>
-
-            </div>
+                <div class="col-12 mt-3">
+                    <button type="submit" class="btn btn-primary w-auto">
+                        <i class="bi bi-search"></i> Tampilkan
+                    </button>
+                </div>
+            </form>
         </div>
+    </div>
 
+    @can('Kepaniteraan Perdata')
         {{-- Form Upload Laporan Baru --}}
         <div class="card mb-4">
             <div class="card-header pb-0">
@@ -59,8 +62,8 @@
                             <b>Nama Laporan</b><span class="text-danger">*</span>
                         </label>
                         <input type="text" name="nama_laporan" id="nama_laporan"
-                            class="form-control @error('nama_laporan') is-invalid @enderror"
-                            placeholder="Nama Laporan..." value="{{ old('nama_laporan') }}" required>
+                            class="form-control @error('nama_laporan') is-invalid @enderror" placeholder="Nama Laporan..."
+                            value="{{ old('nama_laporan') }}" required>
                         @error('nama_laporan')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
@@ -94,6 +97,8 @@
 
             </div>
         </div>
+    @endcan
+    <div class="page-content">
 
         {{-- Daftar Laporan --}}
         <div class="card">
@@ -109,7 +114,9 @@
                                 <th style="width: 30%">Nama Laporan</th>
                                 <th style="width: 25%">File</th>
                                 <th style="width: 25%">Catatan</th>
-                                <th style="width: 15%">Aksi</th>
+                                @can('Kepaniteraan Perdata')
+                                    <th style="width: 15%">Aksi</th>
+                                @endcan
                             </tr>
                         </thead>
                         <tbody>
@@ -127,81 +134,83 @@
                                             <span class="badge bg-warning">Belum Ada File</span>
                                         @endif
                                     </td>
-                                    <td>{{ $detail->catatan ?? '-' }}</td>
-                                    <td>
-                                        {{-- Tombol Edit di dalam tabel --}}
-                                        <button type="button" class="btn btn-primary btn-sm btn-edit"
-                                            data-id="{{ $detail->id }}" data-nama="{{ $detail->nama_laporan }}"
-                                            data-catatan="{{ $detail->catatan }}"
-                                            data-file="{{ $detail->laporan_perdata_path }}">
-                                            <i class="bi bi-pencil"></i>
-                                        </button>
+                                    <td class="text-center">{{ $detail->catatan ?? '-' }}</td>
+                                    @can('Kepaniteraan Perdata')
+                                        <td>
+                                            {{-- Tombol Edit di dalam tabel --}}
+                                            <button type="button" class="btn btn-primary btn-sm btn-edit"
+                                                data-id="{{ $detail->id }}" data-nama="{{ $detail->nama_laporan }}"
+                                                data-catatan="{{ $detail->catatan }}"
+                                                data-file="{{ $detail->laporan_perdata_path }}">
+                                                <i class="bi bi-pencil"></i>
+                                            </button>
 
-                                        <!-- Modal Edit Laporan -->
-                                        <div class="modal fade" id="editLaporanModal" tabindex="-1"
-                                            aria-labelledby="editLaporanLabel" aria-hidden="true">
-                                            <div class="modal-dialog modal-lg">
-                                                <div class="modal-content">
-                                                    <form id="editForm" method="POST" enctype="multipart/form-data"
-                                                        action="{{ route('laporan_perdata.update', $detail->id) }}">
-                                                        @csrf
-                                                        @method('PUT')
+                                            <!-- Modal Edit Laporan -->
+                                            <div class="modal fade" id="editLaporanModal" tabindex="-1"
+                                                aria-labelledby="editLaporanLabel" aria-hidden="true">
+                                                <div class="modal-dialog modal-lg">
+                                                    <div class="modal-content">
+                                                        <form id="editForm" method="POST" enctype="multipart/form-data"
+                                                            action="{{ route('laporan_perdata.update', $detail->id) }}">
+                                                            @csrf
+                                                            @method('PUT')
 
-                                                        <div class="modal-header">
-                                                            <h5 class="modal-title" id="editLaporanLabel">Edit Laporan
-                                                            </h5>
-                                                            <button type="button" class="btn-close"
-                                                                data-bs-dismiss="modal" aria-label="Tutup"></button>
-                                                        </div>
-                                                        <div class="modal-body">
-                                                            <div class="form-group mb-3">
-                                                                <label for="edit_nama_laporan" class="form-label">Nama
-                                                                    Laporan</label>
-                                                                <input type="text" name="edit_nama_laporan"
-                                                                    id="edit_nama_laporan" class="form-control"
-                                                                    required>
+                                                            <div class="modal-header">
+                                                                <h5 class="modal-title" id="editLaporanLabel">Edit Laporan
+                                                                </h5>
+                                                                <button type="button" class="btn-close"
+                                                                    data-bs-dismiss="modal" aria-label="Tutup"></button>
                                                             </div>
+                                                            <div class="modal-body">
+                                                                <div class="form-group mb-3">
+                                                                    <label for="edit_nama_laporan" class="form-label">Nama
+                                                                        Laporan</label>
+                                                                    <input type="text" name="edit_nama_laporan"
+                                                                        id="edit_nama_laporan" class="form-control"
+                                                                        required>
+                                                                </div>
 
-                                                            <div class="form-group mb-3">
-                                                                <label for="edit_catatan"
-                                                                    class="form-label">Catatan</label>
-                                                                <textarea name="edit_catatan" id="edit_catatan" class="form-control" rows="2"></textarea>
-                                                            </div>
+                                                                <div class="form-group mb-3">
+                                                                    <label for="edit_catatan"
+                                                                        class="form-label">Catatan</label>
+                                                                    <textarea name="edit_catatan" id="edit_catatan" class="form-control" rows="2"></textarea>
+                                                                </div>
 
-                                                            <div class="form-group mb-3">
-                                                                <label for="edit_file" class="form-label">Upload File
-                                                                    Baru (Opsional)</label>
-                                                                <input type="file" name="laporan_perdata_path"
-                                                                    id="edit_file" class="form-control">
-                                                                <small class="text-muted">Kosongkan jika tidak ingin
-                                                                    ganti file</small>
-                                                            </div>
+                                                                <div class="form-group mb-3">
+                                                                    <label for="edit_file" class="form-label">Upload File
+                                                                        Baru (Opsional)</label>
+                                                                    <input type="file" name="laporan_perdata_path"
+                                                                        id="edit_file" class="form-control">
+                                                                    <small class="text-muted">Kosongkan jika tidak ingin
+                                                                        ganti file</small>
+                                                                </div>
 
-                                                            <div class="mb-2">
-                                                                <span id="currentFile"></span>
+                                                                <div class="mb-2">
+                                                                    <span id="currentFile"></span>
+                                                                </div>
                                                             </div>
-                                                        </div>
-                                                        <div class="modal-footer">
-                                                            <button type="button" class="btn btn-secondary"
-                                                                data-bs-dismiss="modal">Batal</button>
-                                                            <button type="submit" class="btn btn-success">
-                                                                <i class="bi bi-save"></i> Simpan Perubahan
-                                                            </button>
-                                                        </div>
-                                                    </form>
+                                                            <div class="modal-footer">
+                                                                <button type="button" class="btn btn-secondary"
+                                                                    data-bs-dismiss="modal">Batal</button>
+                                                                <button type="submit" class="btn btn-success">
+                                                                    <i class="bi bi-save"></i> Simpan Perubahan
+                                                                </button>
+                                                            </div>
+                                                        </form>
+                                                    </div>
                                                 </div>
                                             </div>
-                                        </div>
 
-                                        <form action="{{ route('laporan_perdata.destroy', $detail->id) }}"
-                                            method="POST" class="d-inline">
-                                            @csrf
-                                            @method('DELETE')
-                                            <button type="button" class="btn btn-danger btn-sm btn-delete">
-                                                <i class="bi bi-trash"></i>
-                                            </button>
-                                        </form>
-                                    </td>
+                                            <form action="{{ route('laporan_perdata.destroy', $detail->id) }}"
+                                                method="POST" class="d-inline">
+                                                @csrf
+                                                @method('DELETE')
+                                                <button type="button" class="btn btn-danger btn-sm btn-delete">
+                                                    <i class="bi bi-trash"></i>
+                                                </button>
+                                            </form>
+                                        </td>
+                                    @endcan
                                 </tr>
                             @empty
                                 <tr>
@@ -210,6 +219,14 @@
                             @endforelse
                         </tbody>
                     </table>
+                    @if ($laporanPerdata->laporan_perdata_detail->count() > 0)
+                        <div class="mt-3">
+                            <a href="{{ route('laporan_perdata.download_all') }}" class="btn btn-success">
+                                <i class="bi bi-download"></i> Download Semua Laporan (ZIP)
+                            </a>
+                        </div>
+                    @endif
+
                 </div>
             </div>
         </div>
