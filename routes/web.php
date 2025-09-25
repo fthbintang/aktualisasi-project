@@ -96,4 +96,5 @@ Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Perdata, Panite
     Route::get('/dashboard/laporan_perdata', [LaporanPerdataController::class, 'index'])->name('laporan_perdata.index');
     Route::post('/dashboard/laporan_perdata/store', [LaporanPerdataController::class, 'store'])->name('laporan_perdata.store');
     Route::put('/dashboard/laporan_perdata/update/{laporan_perdata_detail}', [LaporanPerdataController::class, 'update'])->name('laporan_perdata.update');
+    Route::delete('/dashboard/laporan_perdata/destroy/{laporan_perdata_detail}', [LaporanPerdataController::class, 'destroy'])->name('laporan_perdata.destroy');
 });

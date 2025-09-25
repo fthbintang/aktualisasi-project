@@ -246,4 +246,29 @@ class LaporanPerdataController extends Controller
         }
     }
 
+    public function destroy(LaporanPerdataDetail $laporanPerdataDetail)
+    {
+        try {
+            // Hapus file dari storage jika ada
+            if ($laporanPerdataDetail->laporan_perdata_path && 
+                Storage::disk('public')->exists($laporanPerdataDetail->laporan_perdata_path)) {
+                Storage::disk('public')->delete($laporanPerdataDetail->laporan_perdata_path);
+            }
+
+            // Hapus data dari database
+            $laporanPerdataDetail->delete();
+
+            Alert::success('Sukses!', 'Laporan berhasil dihapus.');
+            return back();
+        } catch (\Exception $e) {
+            Log::error('Gagal menghapus laporan perdata detail', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            Alert::error('Gagal!', 'Terjadi kesalahan saat menghapus laporan: ' . $e->getMessage());
+            return back();
+        }
+    }
+
 }

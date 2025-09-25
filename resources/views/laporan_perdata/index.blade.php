@@ -193,11 +193,11 @@
                                             </div>
                                         </div>
 
-                                        <form action="#" method="POST" class="d-inline"
-                                            onsubmit="return confirm('Yakin hapus laporan ini?')">
+                                        <form action="{{ route('laporan_perdata.destroy', $detail->id) }}"
+                                            method="POST" class="d-inline">
                                             @csrf
                                             @method('DELETE')
-                                            <button class="btn btn-danger btn-sm">
+                                            <button type="button" class="btn btn-danger btn-sm btn-delete">
                                                 <i class="bi bi-trash"></i>
                                             </button>
                                         </form>
@@ -214,6 +214,10 @@
             </div>
         </div>
     </div>
+
+    <!-- Pastikan jQuery & SweetAlert2 sudah di load -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 
     <script>
         document.addEventListener('DOMContentLoaded', function() {
@@ -241,6 +245,25 @@
                     // Tampilkan modal
                     editModal.show();
                 });
+            });
+        });
+    </script>
+
+    <script>
+        $(document).on('click', '.btn-delete', function(e) {
+            e.preventDefault();
+            const form = $(this).closest('form');
+            Swal.fire({
+                title: 'Yakin ingin menghapus?',
+                text: "Data yang dihapus tidak bisa dikembalikan!",
+                icon: 'warning',
+                showCancelButton: true,
+                confirmButtonColor: '#d33',
+                cancelButtonColor: '#3085d6',
+                confirmButtonText: 'Ya, hapus!',
+                cancelButtonText: 'Batal'
+            }).then((result) => {
+                if (result.isConfirmed) form.submit();
             });
         });
     </script>
