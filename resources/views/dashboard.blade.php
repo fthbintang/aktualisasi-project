@@ -51,7 +51,7 @@
                             </tr>
                         </thead>
                         <tbody>
-                            @foreach ($statusUpload as $laporan => $status)
+                            @forelse ($statusUpload as $laporan => $status)
                                 <tr>
                                     <td>{{ ucwords(str_replace('_', ' ', $laporan)) }}</td>
                                     <td>
@@ -62,9 +62,14 @@
                                         @endif
                                     </td>
                                 </tr>
-                            @endforeach
+                            @empty
+                                <tr>
+                                    <td colspan="2" class="text-center text-muted">Belum ada data laporan</td>
+                                </tr>
+                            @endforelse
                         </tbody>
                     </table>
+
                 </div>
             </div>
         </div>

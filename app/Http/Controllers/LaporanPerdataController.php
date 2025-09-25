@@ -8,7 +8,9 @@ use Illuminate\Http\Request;
 use App\Models\LaporanPerdata;
 use Illuminate\Support\Facades\Log;
 use App\Http\Controllers\Controller;
+use App\Models\LaporanPerdataDetail;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
 use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
 
@@ -68,9 +70,6 @@ class LaporanPerdataController extends Controller
         ]);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
     public function store(Request $request)
     {
         try {
@@ -160,4 +159,91 @@ class LaporanPerdataController extends Controller
             return back()->withInput();
         }
     }
+
+    public function update(Request $request, LaporanPerdataDetail $laporan_perdata_detail)
+    {
+        try {
+            // 🔎 Validasi
+            $validator = Validator::make($request->all(), [
+                'edit_nama_laporan'    => 'required|string|max:255',
+                'edit_catatan'         => 'nullable|string',
+                'laporan_perdata_path' => 'nullable|file|mimes:pdf,doc,docx,xls,xlsx|max:5120',
+            ]);
+
+            if ($validator->fails()) {
+                return back()->withErrors($validator)->withInput();
+            }
+
+            $newNama   = $request->edit_nama_laporan;
+            $filePath  = $laporan_perdata_detail->laporan_perdata_path;
+
+            // 🔎 Ambil tahun & bulan dari file lama (fallback ke sekarang jika kosong)
+            if (!empty($filePath)) {
+                $basename  = basename($filePath); // contoh: laporan_kegiatan_2025_09.pdf
+                $parts     = explode('_', pathinfo($basename, PATHINFO_FILENAME));
+                
+                // Ambil tahun & bulan dari nama file
+                $tahun     = $parts[count($parts)-2] ?? date('Y');
+                $bulanInt  = $parts[count($parts)-1] ?? date('m');
+
+                // Ambil nama bulan dari folder path lama
+                $folderOld = explode('/', $filePath)[1] ?? Carbon::create(null, $bulanInt, 1)->locale('id')->translatedFormat('F');
+                $bulanNama = $folderOld;
+            } else {
+                // fallback kalau file lama belum ada
+                $tahun     = date('Y');
+                $bulanInt  = date('m');
+                $bulanNama = Carbon::create(null, $bulanInt, 1)->locale('id')->translatedFormat('F');
+            }
+
+            $safeNama = Str::slug($newNama, '_');
+
+            // ✅ Jika upload file baru
+            if ($request->hasFile('laporan_perdata_path')) {
+                // Hapus file lama
+                if (!empty($laporan_perdata_detail->laporan_perdata_path) 
+                    && Storage::disk('public')->exists($laporan_perdata_detail->laporan_perdata_path)) {
+                    Storage::disk('public')->delete($laporan_perdata_detail->laporan_perdata_path);
+                }
+
+                $ext      = $request->file('laporan_perdata_path')->getClientOriginalExtension();
+                $folder   = "laporan_perdata/{$bulanNama}";
+                $fileName = "{$safeNama}_{$tahun}_{$bulanInt}.{$ext}";
+
+                $filePath = $request->file('laporan_perdata_path')->storeAs($folder, $fileName, 'public');
+            } else {
+                // ✅ Jika hanya ganti nama laporan → rename file lama
+                if ($laporan_perdata_detail->nama_laporan !== $newNama && !empty($filePath)) {
+                    if (Storage::disk('public')->exists($filePath)) {
+                        $ext     = pathinfo($filePath, PATHINFO_EXTENSION);
+                        $folder  = "laporan_perdata/{$bulanNama}";
+                        $newName = "{$safeNama}_{$tahun}_{$bulanInt}.{$ext}";
+                        $newPath = "{$folder}/{$newName}";
+
+                        Storage::disk('public')->move($filePath, $newPath);
+                        $filePath = $newPath;
+                    }
+                }
+            }
+
+            // ✅ Update DB
+            $laporan_perdata_detail->update([
+                'nama_laporan'         => $newNama,
+                'catatan'              => $request->edit_catatan,
+                'laporan_perdata_path' => $filePath,
+            ]);
+
+            Alert::success('Sukses!', 'Laporan berhasil diperbarui.');
+            return redirect()->back();
+
+        } catch (\Exception $e) {
+            Log::error('Gagal memperbarui laporan', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+            Alert::error('Gagal!', 'Terjadi kesalahan: ' . $e->getMessage());
+            return back()->withInput();
+        }
+    }
+
 }

@@ -44,7 +44,6 @@
             </div>
 
             <div class="card-body">
-
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle"></i>
                     Laporan yang diunggah pada bulan ini adalah <b>hasil kegiatan bulan sebelumnya</b>.
@@ -130,9 +129,70 @@
                                     </td>
                                     <td>{{ $detail->catatan ?? '-' }}</td>
                                     <td>
-                                        <a href="#" class="btn btn-primary btn-sm">
+                                        {{-- Tombol Edit di dalam tabel --}}
+                                        <button type="button" class="btn btn-primary btn-sm btn-edit"
+                                            data-id="{{ $detail->id }}" data-nama="{{ $detail->nama_laporan }}"
+                                            data-catatan="{{ $detail->catatan }}"
+                                            data-file="{{ $detail->laporan_perdata_path }}">
                                             <i class="bi bi-pencil"></i>
-                                        </a>
+                                        </button>
+
+                                        <!-- Modal Edit Laporan -->
+                                        <div class="modal fade" id="editLaporanModal" tabindex="-1"
+                                            aria-labelledby="editLaporanLabel" aria-hidden="true">
+                                            <div class="modal-dialog modal-lg">
+                                                <div class="modal-content">
+                                                    <form id="editForm" method="POST" enctype="multipart/form-data"
+                                                        action="{{ route('laporan_perdata.update', $detail->id) }}">
+                                                        @csrf
+                                                        @method('PUT')
+
+                                                        <div class="modal-header">
+                                                            <h5 class="modal-title" id="editLaporanLabel">Edit Laporan
+                                                            </h5>
+                                                            <button type="button" class="btn-close"
+                                                                data-bs-dismiss="modal" aria-label="Tutup"></button>
+                                                        </div>
+                                                        <div class="modal-body">
+                                                            <div class="form-group mb-3">
+                                                                <label for="edit_nama_laporan" class="form-label">Nama
+                                                                    Laporan</label>
+                                                                <input type="text" name="edit_nama_laporan"
+                                                                    id="edit_nama_laporan" class="form-control"
+                                                                    required>
+                                                            </div>
+
+                                                            <div class="form-group mb-3">
+                                                                <label for="edit_catatan"
+                                                                    class="form-label">Catatan</label>
+                                                                <textarea name="edit_catatan" id="edit_catatan" class="form-control" rows="2"></textarea>
+                                                            </div>
+
+                                                            <div class="form-group mb-3">
+                                                                <label for="edit_file" class="form-label">Upload File
+                                                                    Baru (Opsional)</label>
+                                                                <input type="file" name="laporan_perdata_path"
+                                                                    id="edit_file" class="form-control">
+                                                                <small class="text-muted">Kosongkan jika tidak ingin
+                                                                    ganti file</small>
+                                                            </div>
+
+                                                            <div class="mb-2">
+                                                                <span id="currentFile"></span>
+                                                            </div>
+                                                        </div>
+                                                        <div class="modal-footer">
+                                                            <button type="button" class="btn btn-secondary"
+                                                                data-bs-dismiss="modal">Batal</button>
+                                                            <button type="submit" class="btn btn-success">
+                                                                <i class="bi bi-save"></i> Simpan Perubahan
+                                                            </button>
+                                                        </div>
+                                                    </form>
+                                                </div>
+                                            </div>
+                                        </div>
+
                                         <form action="#" method="POST" class="d-inline"
                                             onsubmit="return confirm('Yakin hapus laporan ini?')">
                                             @csrf
@@ -154,4 +214,35 @@
             </div>
         </div>
     </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const editButtons = document.querySelectorAll('.btn-edit');
+            const editModal = new bootstrap.Modal(document.getElementById('editLaporanModal'));
+            const editForm = document.getElementById('editForm');
+
+            editButtons.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    const id = this.dataset.id;
+                    const nama = this.dataset.nama;
+                    const catatan = this.dataset.catatan;
+                    const file = this.dataset.file;
+
+                    // Isi form
+                    document.getElementById('edit_nama_laporan').value = nama;
+                    document.getElementById('edit_catatan').value = catatan ?? '';
+                    document.getElementById('currentFile').innerHTML = file ?
+                        `<a href="/storage/${file}" target="_blank" class="badge bg-info">Lihat File Lama</a>` :
+                        `<span class="badge bg-warning">Belum ada file</span>`;
+
+                    // Set action form ke route update
+                    editForm.action = "{{ url('/dashboard/laporan_perdata/update') }}/" + id;
+
+                    // Tampilkan modal
+                    editModal.show();
+                });
+            });
+        });
+    </script>
+
 </x-layout>
