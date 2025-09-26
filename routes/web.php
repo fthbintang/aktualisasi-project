@@ -98,7 +98,8 @@ Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Perdata, Panite
     Route::post('/dashboard/laporan_perdata/store', [LaporanPerdataController::class, 'store'])->name('laporan_perdata.store');
     Route::put('/dashboard/laporan_perdata/update/{laporan_perdata_detail}', [LaporanPerdataController::class, 'update'])->name('laporan_perdata.update');
     Route::delete('/dashboard/laporan_perdata/destroy/{laporan_perdata_detail}', [LaporanPerdataController::class, 'destroy'])->name('laporan_perdata.destroy');
-    Route::get('/dashboard/laporan_perdata/download-all', [LaporanPerdataController::class, 'downloadAll'])->name('laporan_perdata.download_all');
+    Route::get('/dashboard/laporan_perdata/download/{tahun}/{bulan}', [LaporanPerdataController::class, 'downloadAll'])->name('laporan_perdata.download_all');
+
 });
 
 Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Pidana, Panitera, Ketua PN'])->group(function () {
@@ -107,4 +108,5 @@ Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Pidana, Paniter
     Route::post('/dashboard/laporan_pidana/store', [LaporanPidanaController::class, 'store'])->name('laporan_pidana.store');
     Route::put('/dashboard/laporan_pidana/update/{laporan_pidana_detail}', [LaporanPidanaController::class, 'update'])->name('laporan_pidana.update');
     Route::delete('/dashboard/laporan_pidana/destroy/{laporan_pidana_detail}', [LaporanPidanaController::class, 'destroy'])->name('laporan_pidana.destroy');
+    Route::get('/dashboard/laporan_pidana/download/{tahun}/{bulan}', [LaporanPidanaController::class, 'downloadAll'])->name('laporan_pidana.download_all');
 });

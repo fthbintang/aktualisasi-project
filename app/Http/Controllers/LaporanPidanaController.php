@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use ZipArchive;
 use Carbon\Carbon;
 use Illuminate\Support\Str;
 use Illuminate\Http\Request;
@@ -268,7 +269,7 @@ class LaporanPidanaController extends Controller
             Alert::success('Sukses!', 'Laporan berhasil dihapus.');
             return back();
         } catch (\Exception $e) {
-            Log::error('Gagal menghapus laporan perdata detail', [
+            Log::error('Gagal menghapus laporan pidana detail', [
                 'error' => $e->getMessage(),
                 'trace' => $e->getTraceAsString()
             ]);
@@ -276,5 +277,35 @@ class LaporanPidanaController extends Controller
             Alert::error('Gagal!', 'Terjadi kesalahan saat menghapus laporan: ' . $e->getMessage());
             return back();
         }
+    }
+
+    public function downloadAll($tahun, $bulan)
+    {
+        $laporanDetails = LaporanPidanaDetail::whereHas('laporan_pidana', function ($query) use ($tahun, $bulan) {
+                $query->where('tahun', $tahun)
+                    ->where('bulan', $bulan);
+            })
+            ->get();
+
+        if ($laporanDetails->isEmpty()) {
+            return back()->with('error', 'Tidak ada laporan untuk diunduh pada periode tersebut.');
+        }
+
+        $zipFileName = "laporan_pidana_{$tahun}_{$bulan}_" . now()->format('His') . '.zip';
+        $zipPath = storage_path('app/public/' . $zipFileName);
+
+        $zip = new \ZipArchive;
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
+            foreach ($laporanDetails as $detail) {
+                if ($detail->laporan_pidana_path && Storage::disk('public')->exists($detail->laporan_pidana_path)) {
+                    $filePath = Storage::disk('public')->path($detail->laporan_pidana_path);
+                    $fileName = basename($filePath);
+                    $zip->addFile($filePath, $fileName);
+                }
+            }
+            $zip->close();
+        }
+
+        return response()->download($zipPath)->deleteFileAfterSend(true);
     }
 }

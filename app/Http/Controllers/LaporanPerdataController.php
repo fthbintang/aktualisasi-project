@@ -279,23 +279,27 @@ class LaporanPerdataController extends Controller
         }
     }
 
-    public function downloadAll()
+    public function downloadAll($tahun, $bulan)
     {
-        $laporanDetails = LaporanPerdataDetail::all(); // bisa difilter sesuai kebutuhan
+        $laporanDetails = LaporanPerdataDetail::whereHas('laporan_perdata', function ($query) use ($tahun, $bulan) {
+                $query->where('tahun', $tahun)
+                    ->where('bulan', $bulan);
+            })
+            ->get();
 
         if ($laporanDetails->isEmpty()) {
-            return back()->with('error', 'Tidak ada laporan untuk diunduh.');
+            return back()->with('error', 'Tidak ada laporan untuk diunduh pada periode tersebut.');
         }
 
-        $zipFileName = 'laporan_perdata_' . now()->format('Y_m_d_His') . '.zip';
+        $zipFileName = "laporan_perdata_{$tahun}_{$bulan}_" . now()->format('His') . '.zip';
         $zipPath = storage_path('app/public/' . $zipFileName);
 
-        $zip = new ZipArchive;
-        if ($zip->open($zipPath, ZipArchive::CREATE | ZipArchive::OVERWRITE) === true) {
+        $zip = new \ZipArchive;
+        if ($zip->open($zipPath, \ZipArchive::CREATE | \ZipArchive::OVERWRITE) === true) {
             foreach ($laporanDetails as $detail) {
                 if ($detail->laporan_perdata_path && Storage::disk('public')->exists($detail->laporan_perdata_path)) {
                     $filePath = Storage::disk('public')->path($detail->laporan_perdata_path);
-                    $fileName = basename($filePath); // bisa diganti custom nama
+                    $fileName = basename($filePath);
                     $zip->addFile($filePath, $fileName);
                 }
             }

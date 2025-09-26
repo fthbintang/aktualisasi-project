@@ -240,15 +240,16 @@
                         </tbody>
                     </table>
 
-                    @cannot('Kepaniteraan Pidana')
-                        @if ($laporanPidana->laporan_pidana_detail->count() > 0)
-                            <div class="mt-3">
-                                <a href="#" class="btn btn-success">
-                                    <i class="bi bi-download"></i> Download Semua Laporan (ZIP)
-                                </a>
-                            </div>
-                        @endif
-                    @endcannot
+                    {{-- @cannot('Kepaniteraan Pidana') --}}
+                    @if ($laporanPidana->laporan_pidana_detail->count() > 0)
+                        <div class="mt-3">
+                            <a href="{{ route('laporan_pidana.download_all', ['tahun' => $tahun, 'bulan' => $bulan]) }}"
+                                class="btn btn-success">
+                                <i class="bi bi-download"></i> Download Semua Laporan (ZIP)
+                            </a>
+                        </div>
+                    @endif
+                    {{-- @endcannot --}}
 
                 </div>
             </div>

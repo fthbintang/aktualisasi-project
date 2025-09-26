@@ -243,7 +243,8 @@
                     @cannot('Kepaniteraan Perdata')
                         @if ($laporanPerdata->laporan_perdata_detail->count() > 0)
                             <div class="mt-3">
-                                <a href="{{ route('laporan_perdata.download_all') }}" class="btn btn-success">
+                                <a href="{{ route('laporan_perdata.download_all', ['tahun' => $tahun, 'bulan' => $bulan]) }}"
+                                    class="btn btn-success">
                                     <i class="bi bi-download"></i> Download Semua Laporan (ZIP)
                                 </a>
                             </div>
