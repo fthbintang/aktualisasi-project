@@ -104,4 +104,5 @@ Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Perdata, Panite
 Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Pidana, Panitera, Ketua PN'])->group(function () {
     // LAPORAN PIDANA
     Route::get('/dashboard/laporan_pidana', [LaporanPidanaController::class, 'index'])->name('laporan_pidana.index');
+    Route::post('/dashboard/laporan_pidana/store', [LaporanPidanaController::class, 'store'])->name('laporan_pidana.store');
 });

@@ -56,7 +56,7 @@
                     laporan kegiatan <b>{{ $bulanSebelumnya }} {{ $tahunSebelumnya }}</b>.
                 </div>
 
-                <form action="#" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('laporan_pidana.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="bulan" value="{{ $bulan }}">
                     <input type="hidden" name="tahun" value="{{ $tahun }}">

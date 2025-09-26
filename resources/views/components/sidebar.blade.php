@@ -23,24 +23,35 @@
 
         @can('Kepaniteraan Hukum')
             <li class="nav-item mt-3">
-                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Laporan Kepaniteraan Hukum</h6>
+                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
+                    Laporan Kepaniteraan Hukum
+                </h6>
             </li>
             <x-sidebar-link href="{{ route('daftar_laporan.index') }}" icon="ni ni-books" label="Daftar Laporan" />
             <x-sidebar-link href="{{ route('laporan.index') }}" icon="ni ni-single-copy-04" label="Upload Laporan" />
-        @else
+        @elseif(!auth()->user()->can('Kepaniteraan Pidana') && !auth()->user()->can('Kepaniteraan Perdata'))
             <x-sidebar-link href="{{ route('laporan.index') }}" icon="ni ni-single-copy-04" label="Laporan Hukum" />
         @endcan
 
-        <li class="nav-item mt-3">
-            <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Laporan Kepaniteraan Perdata</h6>
-        </li>
+
         @can('Kepaniteraan Perdata')
+            <li class="nav-item mt-3">
+                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
+                    Laporan Kepaniteraan Perdata
+                </h6>
+            </li>
             <x-sidebar-link href="{{ route('laporan_perdata.index') }}" icon="ni ni-single-copy-04"
                 label="Upload Laporan" />
-        @else
+        @elseif(!auth()->user()->can('Kepaniteraan Pidana'))
+            <li class="nav-item mt-3">
+                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
+                    Laporan Kepaniteraan Perdata
+                </h6>
+            </li>
             <x-sidebar-link href="{{ route('laporan_perdata.index') }}" icon="ni ni-single-copy-04"
                 label="Laporan Perdata" />
         @endcan
+
 
         <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Laporan Kepaniteraan Pidana</h6>
