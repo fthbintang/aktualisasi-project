@@ -16,7 +16,7 @@ use RealRashid\SweetAlert\Facades\Alert;
 use Illuminate\Support\Facades\Validator;
 
 class LaporanPerdataController extends Controller
-{
+{    
     public function index(Request $request)
     {
         // Ambil raw input
@@ -37,37 +37,44 @@ class LaporanPerdataController extends Controller
             if (isset($map[$key])) {
                 $bulan = $map[$key];
             } else {
-                // fallback: coba parse dengan Carbon (mis. "Sep" atau "September")
+                // fallback: coba parse dengan Carbon
                 try {
                     $parsed = Carbon::parse('1 ' . $bulanInput);
                     $bulan = (int) $parsed->month;
                 } catch (\Exception $e) {
-                    // jika tetap gagal, pakai bulan sekarang
                     $bulan = now()->month;
                 }
             }
         }
 
-        // pastikan tahun integer
+        // Pastikan tahun integer
         $tahun = (int) $tahunInput;
 
-        // Ambil nama bulan dg cara aman (locale id)
-        $bulanNama = Carbon::createFromDate($tahun, $bulan, 1)->locale('id')->translatedFormat('F');
+        // Ambil nama bulan & nama bulan sebelumnya (locale id)
+        $carbonBulan = Carbon::createFromDate($tahun, $bulan, 1)->locale('id');
+        $bulanNama = $carbonBulan->translatedFormat('F');
+
+        // Untuk bulan sebelumnya → otomatis handle Januari (mundur ke Desember tahun lalu)
+        $carbonSebelumnya = $carbonBulan->copy()->subMonth();
+        $bulanSebelumnya = $carbonSebelumnya->translatedFormat('F');
+        $tahunSebelumnya = $carbonSebelumnya->year; // kalau perlu tampilkan juga tahun sebelumnya
 
         // Cari atau buat entri laporan_perdata untuk bulan & tahun itu
         $laporanPerdata = LaporanPerdata::firstOrCreate(
             ['bulan' => $bulan, 'tahun' => $tahun]
         );
 
-        // Ambil detail laporan yang terkait (sesuaikan nama relasi model Anda)
+        // Ambil detail laporan
         $laporanPerdata->load('laporan_perdata_detail');
 
         return view('laporan_perdata.index', [
-            'breadcrumbs' => ['Laporan Perdata'],
-            'bulan'       => $bulan,
-            'tahun'       => $tahun,
-            'bulanNama'   => $bulanNama,
-            'laporanPerdata' => $laporanPerdata,
+            'breadcrumbs'      => ['Laporan Perdata'],
+            'bulan'            => $bulan,
+            'tahun'            => $tahun,
+            'bulanNama'        => $bulanNama,
+            'bulanSebelumnya'  => $bulanSebelumnya,
+            'tahunSebelumnya'  => $tahunSebelumnya,
+            'laporanPerdata'   => $laporanPerdata,
         ]);
     }
 

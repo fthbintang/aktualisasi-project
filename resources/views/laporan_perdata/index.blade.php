@@ -49,9 +49,13 @@
             <div class="card-body">
                 <div class="alert alert-info">
                     <i class="bi bi-info-circle"></i>
-                    Laporan yang diunggah pada bulan ini adalah <b>hasil kegiatan bulan sebelumnya</b>.
-                    Contoh: upload Februari berisi laporan bulan Januari.
+                    <b>Perhatian!</b> Laporan yang <u>Anda upload pada bulan yang dipilih</u>
+                    merupakan hasil kegiatan dari <b>bulan sebelumnya</b>.
+                    <br>
+                    Contoh: jika memilih <b>{{ $bulanNama }} {{ $tahun }}</b>, maka file yang diunggah berisi
+                    laporan kegiatan <b>{{ $bulanSebelumnya }} {{ $tahunSebelumnya }}</b>.
                 </div>
+
                 <form action="{{ route('laporan_perdata.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="bulan" value="{{ $bulan }}">
@@ -98,6 +102,7 @@
             </div>
         </div>
     @endcan
+
     <div class="page-content">
 
         {{-- Daftar Laporan --}}
@@ -106,6 +111,21 @@
                 <h5>Daftar Laporan - {{ $bulanNama }} {{ $tahun }}</h5>
             </div>
             <div class="card-body">
+
+                @cannot('Kepaniteraan Perdata')
+                    {{-- Penjelasan bulan laporan --}}
+                    <div class="alert alert-info d-flex align-items-center" role="alert">
+                        <i class="bi bi-info-circle me-2"></i>
+                        <div>
+                            <div>
+                                Laporan yang ditampilkan untuk <b>{{ $bulanNama }} {{ $tahun }}</b>
+                                merupakan hasil kegiatan <b>{{ $bulanSebelumnya }} {{ $tahunSebelumnya }}</b>.
+                            </div>
+
+                        </div>
+                    </div>
+                @endcan
+
                 <div class="table-responsive p-0">
                     <table class="table align-items-center mb-0">
                         <thead class="table-light">
@@ -219,13 +239,16 @@
                             @endforelse
                         </tbody>
                     </table>
-                    @if ($laporanPerdata->laporan_perdata_detail->count() > 0)
-                        <div class="mt-3">
-                            <a href="{{ route('laporan_perdata.download_all') }}" class="btn btn-success">
-                                <i class="bi bi-download"></i> Download Semua Laporan (ZIP)
-                            </a>
-                        </div>
-                    @endif
+
+                    @cannot('Kepaniteraan Perdata')
+                        @if ($laporanPerdata->laporan_perdata_detail->count() > 0)
+                            <div class="mt-3">
+                                <a href="{{ route('laporan_perdata.download_all') }}" class="btn btn-success">
+                                    <i class="bi bi-download"></i> Download Semua Laporan (ZIP)
+                                </a>
+                            </div>
+                        @endif
+                    @endcannot
 
                 </div>
             </div>
