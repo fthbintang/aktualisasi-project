@@ -34,65 +34,76 @@
         </div>
     </div>
 
-
     {{-- Baris 2: Status Upload --}}
-    <div class="row mt-4">
-        <div class="col-12">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Status Upload Laporan - {{ $bulanSekarang }}</h5>
-                </div>
-                <div class="card-body">
-                    <table class="table table-bordered">
-                        <thead class="table-light">
-                            <tr>
-                                <th style="width: 70%">Jenis Laporan</th>
-                                <th style="width: 30%">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            @forelse ($statusUpload as $laporan => $status)
+    @can('Kepaniteraan Hukum')
+        <div class="row mt-4">
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Status Upload Laporan - {{ $bulanSekarang }}</h5>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-bordered">
+                            <thead class="table-light">
                                 <tr>
-                                    <td>{{ ucwords(str_replace('_', ' ', $laporan)) }}</td>
-                                    <td>
-                                        @if ($status)
-                                            <span class="badge bg-success">Lengkap</span>
-                                        @else
-                                            <span class="badge bg-danger">Belum Lengkap</span>
-                                        @endif
-                                    </td>
+                                    <th style="width: 70%">Jenis Laporan</th>
+                                    <th style="width: 30%">Status</th>
                                 </tr>
-                            @empty
-                                <tr>
-                                    <td colspan="2" class="text-center text-muted">Belum ada data laporan</td>
-                                </tr>
-                            @endforelse
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody>
+                                @forelse ($statusUpload as $laporan => $status)
+                                    <tr>
+                                        <td>{{ ucwords(str_replace('_', ' ', $laporan)) }}</td>
+                                        <td>
+                                            @if ($status)
+                                                <span class="badge bg-success">Lengkap</span>
+                                            @else
+                                                <span class="badge bg-danger">Belum Lengkap</span>
+                                            @endif
+                                        </td>
+                                    </tr>
+                                @empty
+                                    <tr>
+                                        <td colspan="2" class="text-center text-muted">Belum ada data laporan</td>
+                                    </tr>
+                                @endforelse
+                            </tbody>
+                        </table>
 
+                    </div>
                 </div>
             </div>
         </div>
-    </div>
+    @endcan
 
     {{-- Baris 3: Grafik --}}
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header pb-0">
                     <h5>Arsip Permohonan per Bulan</h5>
                 </div>
                 <div class="card-body">
+                    <p class="text-muted mb-3">
+                        <i class="bi bi-info-circle"></i>
+                        Grafik ini menampilkan jumlah <b>permohonan</b> yang masuk dan diarsipkan
+                        pada setiap bulan, sehingga memudahkan pemantauan tren permohonan dari waktu ke waktu.
+                    </p>
                     <canvas id="permohonanChart"></canvas>
                 </div>
             </div>
         </div>
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header pb-0">
                     <h5>Arsip Gugatan per Bulan</h5>
                 </div>
                 <div class="card-body">
+                    <p class="text-muted">
+                        <i class="bi bi-info-circle"></i>
+                        Grafik ini menampilkan jumlah <b>gugatan</b> yang masuk dan diarsipkan pada setiap bulan, untuk
+                        memantau tren perkara gugatan secara berkala.
+                    </p>
                     <canvas id="gugatanChart"></canvas>
                 </div>
             </div>
@@ -102,24 +113,37 @@
     <div class="row mt-4">
         <div class="col-md-6">
             <div class="card">
-                <div class="card-header">
+                <div class="card-header pb-0">
                     <h5>Arsip Pidana per Bulan</h5>
                 </div>
                 <div class="card-body">
+                    <p class="text-muted">
+                        <i class="bi bi-info-circle"></i>
+                        Grafik ini menampilkan jumlah <b>pidana</b> yang masuk dan diarsipkan pada setiap bulan, untuk
+                        memantau tren perkara pidana secara berkala.
+                    </p>
                     <canvas id="pidanaChart"></canvas>
                 </div>
             </div>
         </div>
-        <div class="col-md-6">
-            <div class="card">
-                <div class="card-header">
-                    <h5>Kepatuhan Laporan</h5>
-                </div>
-                <div class="card-body">
-                    <canvas id="kepatuhanChart"></canvas>
+
+        @canany(['Kepaniteraan Hukum', 'Panitera', 'Ketua PN'])
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header pb-0">
+                        <h5>Kepatuhan Laporan Kepaniteraan Hukum</h5>
+                    </div>
+                    <div class="card-body pb-0">
+                        <p class="text-muted">
+                            <i class="bi bi-info-circle"></i>
+                            Kepatuhan di sini menggambarkan sejauh mana laporan yang seharusnya dibuat
+                            oleh <b>Kepaniteraan Hukum</b> benar-benar telah dibuat dan diserahkan sesuai ketentuan.
+                        </p>
+                        <canvas id="kepatuhanChart"></canvas>
+                    </div>
                 </div>
             </div>
-        </div>
+        @endcanany
     </div>
 
     {{-- ChartJS --}}
