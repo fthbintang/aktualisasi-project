@@ -7,6 +7,7 @@ use App\Http\Controllers\DaftarLaporanController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\LaporanController;
 use App\Http\Controllers\LaporanPerdataController;
+use App\Http\Controllers\LaporanPidanaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
 use App\Http\Controllers\UserController;
@@ -98,4 +99,9 @@ Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Perdata, Panite
     Route::put('/dashboard/laporan_perdata/update/{laporan_perdata_detail}', [LaporanPerdataController::class, 'update'])->name('laporan_perdata.update');
     Route::delete('/dashboard/laporan_perdata/destroy/{laporan_perdata_detail}', [LaporanPerdataController::class, 'destroy'])->name('laporan_perdata.destroy');
     Route::get('/dashboard/laporan_perdata/download-all', [LaporanPerdataController::class, 'downloadAll'])->name('laporan_perdata.download_all');
+});
+
+Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Pidana, Panitera, Ketua PN'])->group(function () {
+    // LAPORAN PIDANA
+    Route::get('/dashboard/laporan_pidana', [LaporanPidanaController::class, 'index'])->name('laporan_pidana.index');
 });
