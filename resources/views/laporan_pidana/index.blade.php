@@ -1,18 +1,18 @@
 <x-layout :breadcrumbs="$breadcrumbs">
     <div class="page-heading ms-3">
-        @can('Kepaniteraan Perdata')
-            <h3 class="text-white">Upload Laporan Perdata Bulanan</h3>
-            <p class="text-white">Pilih bulan & tahun, lalu upload laporan perdata yang akan dikirim ke hukum.</p>
+        @can('Kepaniteraan Pidana')
+            <h3 class="text-white">Upload Laporan Pidana Bulanan</h3>
+            <p class="text-white">Pilih bulan & tahun, lalu upload laporan pidana yang akan dikirim ke hukum.</p>
         @else
-            <h3 class="text-white">Laporan Perdata Bulanan</h3>
-            <p class="text-white">Silakan pilih bulan & tahun untuk melihat laporan perdata yang telah diunggah.</p>
+            <h3 class="text-white">Laporan Pidana Bulanan</h3>
+            <p class="text-white">Silakan pilih bulan & tahun untuk melihat laporan pidana yang telah diunggah.</p>
         @endcan
     </div>
 
     {{-- Filter Bulan & Tahun --}}
     <div class="card mb-3">
         <div class="card-body">
-            <form method="GET" action="{{ route('laporan_perdata.index') }}" class="row g-2">
+            <form method="GET" action="{{ route('laporan_pidana.index') }}" class="row g-2">
                 <div class="col-md-4">
                     <label for="bulan" class="form-label">Bulan</label>
                     <select name="bulan" id="bulan" class="form-select">
@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    @can('Kepaniteraan Perdata')
+    @can('Kepaniteraan Pidana')
         {{-- Form Upload Laporan Baru --}}
         <div class="card mb-4">
             <div class="card-header pb-0">
@@ -56,7 +56,7 @@
                     laporan kegiatan <b>{{ $bulanSebelumnya }} {{ $tahunSebelumnya }}</b>.
                 </div>
 
-                <form action="{{ route('laporan_perdata.store') }}" method="POST" enctype="multipart/form-data">
+                <form action="{{ route('laporan_pidana.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
                     <input type="hidden" name="bulan" value="{{ $bulan }}">
                     <input type="hidden" name="tahun" value="{{ $tahun }}">
@@ -74,13 +74,13 @@
                     </div>
 
                     <div class="form-group mb-3">
-                        <label for="laporan_perdata_path" class="form-label">
+                        <label for="laporan_pidana_path" class="form-label">
                             <b>Upload File</b><span class="text-danger">*</span>
                         </label>
-                        <input type="file" name="laporan_perdata_path" id="laporan_perdata_path"
-                            class="form-control @error('laporan_perdata_path') is-invalid @enderror" required>
+                        <input type="file" name="laporan_pidana_path" id="laporan_pidana_path"
+                            class="form-control @error('laporan_pidana_path') is-invalid @enderror" required>
                         <small class="text-muted">Format: PDF, DOCX, XLSX, dll</small>
-                        @error('laporan_perdata_path')
+                        @error('laporan_pidana_path')
                             <div class="invalid-feedback">{{ $message }}</div>
                         @enderror
                     </div>
@@ -112,7 +112,7 @@
             </div>
             <div class="card-body">
 
-                @cannot('Kepaniteraan Perdata')
+                @cannot('Kepaniteraan Pidana')
                     {{-- Penjelasan bulan laporan --}}
                     <div class="alert alert-info d-flex align-items-center" role="alert">
                         <i class="bi bi-info-circle me-2"></i>
@@ -134,19 +134,19 @@
                                 <th style="width: 30%">Nama Laporan</th>
                                 <th style="width: 25%">File</th>
                                 <th style="width: 25%">Catatan</th>
-                                @can('Kepaniteraan Perdata')
+                                @can('Kepaniteraan Pidana')
                                     <th style="width: 15%">Aksi</th>
                                 @endcan
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($laporanPerdata->laporan_perdata_detail as $detail)
+                            @forelse($laporanPidana->laporan_pidana_detail as $detail)
                                 <tr>
                                     <td>{{ $loop->iteration }}</td>
                                     <td>{{ $detail->nama_laporan }}</td>
                                     <td>
-                                        @if ($detail->laporan_perdata_path)
-                                            <a href="{{ asset('storage/' . $detail->laporan_perdata_path) }}"
+                                        @if ($detail->laporan_pidana_path)
+                                            <a href="{{ asset('storage/' . $detail->laporan_pidana_path) }}"
                                                 target="_blank" class="btn btn-info btn-sm">
                                                 <i class="bi bi-eye"></i> Preview
                                             </a>
@@ -155,13 +155,13 @@
                                         @endif
                                     </td>
                                     <td class="text-center">{{ $detail->catatan ?? '-' }}</td>
-                                    @can('Kepaniteraan Perdata')
+                                    @can('Kepaniteraan Pidana')
                                         <td>
                                             {{-- Tombol Edit di dalam tabel --}}
                                             <button type="button" class="btn btn-primary btn-sm btn-edit"
                                                 data-id="{{ $detail->id }}" data-nama="{{ $detail->nama_laporan }}"
                                                 data-catatan="{{ $detail->catatan }}"
-                                                data-file="{{ $detail->laporan_perdata_path }}">
+                                                data-file="{{ $detail->laporan_pidana_path }}">
                                                 <i class="bi bi-pencil"></i>
                                             </button>
 
@@ -171,7 +171,7 @@
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <form id="editForm" method="POST" enctype="multipart/form-data"
-                                                            action="{{ route('laporan_perdata.update', $detail->id) }}">
+                                                            action="{{ route('laporan_pidana.update', $detail->id) }}">
                                                             @csrf
                                                             @method('PUT')
 
@@ -199,7 +199,7 @@
                                                                 <div class="form-group mb-3">
                                                                     <label for="edit_file" class="form-label">Upload File
                                                                         Baru (Opsional)</label>
-                                                                    <input type="file" name="laporan_perdata_path"
+                                                                    <input type="file" name="laporan_pidana_path"
                                                                         id="edit_file" class="form-control">
                                                                     <small class="text-muted">Kosongkan jika tidak ingin
                                                                         ganti file</small>
@@ -221,7 +221,7 @@
                                                 </div>
                                             </div>
 
-                                            <form action="{{ route('laporan_perdata.destroy', $detail->id) }}"
+                                            <form action="{{ route('laporan_pidana.destroy', $detail->id) }}"
                                                 method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
@@ -240,10 +240,10 @@
                         </tbody>
                     </table>
 
-                    @cannot('Kepaniteraan Perdata')
-                        @if ($laporanPerdata->laporan_perdata_detail->count() > 0)
+                    @cannot('Kepaniteraan Pidana')
+                        @if ($laporanPidana->laporan_pidana_detail->count() > 0)
                             <div class="mt-3">
-                                <a href="{{ route('laporan_perdata.download_all', ['tahun' => $tahun, 'bulan' => $bulan]) }}"
+                                <a href="{{ route('laporan_pidana.download_all', ['tahun' => $tahun, 'bulan' => $bulan]) }}"
                                     class="btn btn-success">
                                     <i class="bi bi-download"></i> Download Semua Laporan (ZIP)
                                 </a>
@@ -281,7 +281,7 @@
                         `<span class="badge bg-warning">Belum ada file</span>`;
 
                     // Set action form ke route update
-                    editForm.action = "{{ url('/dashboard/laporan_perdata/update') }}/" + id;
+                    editForm.action = "{{ url('/dashboard/laporan_pidana/update') }}/" + id;
 
                     // Tampilkan modal
                     editModal.show();
