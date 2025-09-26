@@ -171,7 +171,7 @@
                                                 <div class="modal-dialog modal-lg">
                                                     <div class="modal-content">
                                                         <form id="editForm" method="POST" enctype="multipart/form-data"
-                                                            action="#">
+                                                            action="{{ route('laporan_pidana.update', $detail->id) }}">
                                                             @csrf
                                                             @method('PUT')
 
