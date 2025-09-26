@@ -221,7 +221,8 @@
                                                 </div>
                                             </div>
 
-                                            <form action="#" method="POST" class="d-inline">
+                                            <form action="{{ route('laporan_pidana.destroy', $detail->id) }}"
+                                                method="POST" class="d-inline">
                                                 @csrf
                                                 @method('DELETE')
                                                 <button type="button" class="btn btn-danger btn-sm btn-delete">

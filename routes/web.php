@@ -106,4 +106,5 @@ Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Pidana, Paniter
     Route::get('/dashboard/laporan_pidana', [LaporanPidanaController::class, 'index'])->name('laporan_pidana.index');
     Route::post('/dashboard/laporan_pidana/store', [LaporanPidanaController::class, 'store'])->name('laporan_pidana.store');
     Route::put('/dashboard/laporan_pidana/update/{laporan_pidana_detail}', [LaporanPidanaController::class, 'update'])->name('laporan_pidana.update');
+    Route::delete('/dashboard/laporan_pidana/destroy/{laporan_pidana_detail}', [LaporanPidanaController::class, 'destroy'])->name('laporan_pidana.destroy');
 });

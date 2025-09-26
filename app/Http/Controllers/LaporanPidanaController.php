@@ -252,4 +252,29 @@ class LaporanPidanaController extends Controller
             return back()->withInput();
         }
     }
+
+    public function destroy(LaporanPidanaDetail $laporanPidanaDetail)
+    {
+        try {
+            // Hapus file dari storage jika ada
+            if ($laporanPidanaDetail->laporan_pidana_path && 
+                Storage::disk('public')->exists($laporanPidanaDetail->laporan_pidana_path)) {
+                Storage::disk('public')->delete($laporanPidanaDetail->laporan_pidana_path);
+            }
+
+            // Hapus data dari database
+            $laporanPidanaDetail->delete();
+
+            Alert::success('Sukses!', 'Laporan berhasil dihapus.');
+            return back();
+        } catch (\Exception $e) {
+            Log::error('Gagal menghapus laporan perdata detail', [
+                'error' => $e->getMessage(),
+                'trace' => $e->getTraceAsString()
+            ]);
+
+            Alert::error('Gagal!', 'Terjadi kesalahan saat menghapus laporan: ' . $e->getMessage());
+            return back();
+        }
+    }
 }
