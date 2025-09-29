@@ -1,5 +1,5 @@
 <x-layout :breadcrumbs="$breadcrumbs">
-    <style>
+    {{-- <style>
         /* Sticky column */
         .sticky-col {
             position: sticky;
@@ -18,6 +18,49 @@
             /* warna abu2 header */
             z-index: 3;
             /* lebih tinggi supaya tidak ketutup */
+        }
+    </style> --}}
+
+    <style>
+        .table-responsive {
+            max-height: 700px;
+            /* tinggi scroll */
+            overflow-y: auto;
+            /* scroll vertical */
+            overflow-x: auto;
+            /* scroll horizontal */
+        }
+
+        /* Header bulan sticky */
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            /* lebih rendah dari sticky-col */
+            background: #fff;
+        }
+
+        /* Sticky kolom Nama Laporan */
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            /* pastikan lebih tinggi dari thead th */
+            background-color: #fff;
+            white-space: nowrap;
+        }
+
+        /* Sticky kolom Nama Laporan di baris header */
+        .table thead .sticky-col {
+            z-index: 30;
+            /* paling tinggi supaya tidak tertutup */
+            background: #fff;
+        }
+
+        /* Untuk header baris pembatas jenis */
+        .table-active .sticky-col {
+            background-color: #f8f9fa !important;
+            z-index: 25;
         }
     </style>
 
