@@ -1,6 +1,27 @@
 <x-layout :breadcrumbs="$breadcrumbs">
-    <div class="container-fluid py-4">
+    <style>
+        /* Sticky column */
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            /* supaya di atas cell lainnya */
+            background-color: #fff;
+            /* penting agar tidak transparan */
+            white-space: nowrap;
+            /* biar teks tidak pecah */
+        }
 
+        /* Untuk header baris "table-active" */
+        .table-active .sticky-col {
+            background-color: #f8f9fa !important;
+            /* warna abu2 header */
+            z-index: 3;
+            /* lebih tinggi supaya tidak ketutup */
+        }
+    </style>
+
+    <div class="container-fluid py-4">
         {{-- Form Filter Tahun --}}
         <div class="card mb-4">
             <div class="card-body d-flex justify-content-between align-items-center">
@@ -55,7 +76,7 @@
                         <table class="table table-bordered align-middle">
                             <thead>
                                 <tr>
-                                    <th>Nama Laporan</th>
+                                    <th class="sticky-col bg-white">Nama Laporan</th>
                                     @foreach (range(1, 12) as $month)
                                         <th class="text-center">{{ $bulanIndo[$month] }}</th>
                                     @endforeach
@@ -67,10 +88,12 @@
                             <tbody>
                                 @foreach ($laporanGrouped as $jenisId => $laporanGroup)
                                     <tr class="table-active">
-                                        <th colspan="{{ $colspan + 1 }}">
+                                        <th class="sticky-col bg-light">
                                             {{ optional($jenisLaporan->firstWhere('id', $jenisId))->nama_jenis ?? 'Tanpa Jenis' }}
                                         </th>
+                                        <td colspan="{{ $colspan }}" class="bg-light"></td>
                                     </tr>
+
                                     @foreach ($laporanGroup as $lt)
                                         @php
                                             $laporan = $lt->laporan;
@@ -84,7 +107,7 @@
                                             $warna = 'bg-secondary-subtle'; // warna abu-abu
                                         @endphp
                                         <tr id="row-laporan-{{ $laporan->id }}">
-                                            <td>
+                                            <td class="sticky-col bg-white">
                                                 {{ $laporan->nama_laporan }}
                                                 @if ($laporan->periode_upload)
                                                     <br><small
@@ -221,7 +244,7 @@
                                 @endforeach
                                 {{-- Tambahkan baris tombol download zip per bulan --}}
                                 <tr class="table-info">
-                                    <td><b>Download Semua Laporan</b></td>
+                                    <td class="sticky-col"><b>Download Semua Laporan</b></td>
                                     @foreach (range(1, 12) as $month)
                                         <td class="text-center">
                                             @php

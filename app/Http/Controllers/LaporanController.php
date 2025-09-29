@@ -50,14 +50,22 @@ class LaporanController extends Controller
     public function create(Request $request)
     {
         $tahun = $request->input('tahun', date('Y'));
-        $laporan = Laporan::all(); // ambil semua laporan
+
+        // Ambil semua jenis laporan
+        $jenisLaporan = JenisLaporan::all();
+
+        // Ambil semua laporan beserta relasi jenis_laporan
+        $laporan = Laporan::with('jenis_laporan')->get();
+
+        // Ambil laporan_tahun sesuai tahun
         $laporanTahun = LaporanTahun::where('tahun', $tahun)->get();
 
         return view('laporan.create_laporan_tahun', [
-            'breadcrumbs' => ['Laporan', 'Tambah Laporan'],
-            'tahun' => $tahun,
-            'laporan' => $laporan,
-            'laporanTahun' => $laporanTahun
+            'breadcrumbs'   => ['Laporan', 'Tambah Laporan'],
+            'tahun'         => $tahun,
+            'laporan'       => $laporan,
+            'laporanTahun'  => $laporanTahun,
+            'jenisLaporan'  => $jenisLaporan, // tambahan untuk grouping
         ]);
     }
 

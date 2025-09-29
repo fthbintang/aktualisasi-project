@@ -2,14 +2,15 @@
 
 namespace Database\Seeders;
 
-use App\Models\ArsipPidana;
 use App\Models\User;
-// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Laporan;
+// use Illuminate\Database\Console\Seeds\WithoutModelEvents;
+use App\Models\ArsipPidana;
 use App\Models\JenisLaporan;
 use App\Models\LaporanTahun;
 use App\Models\UploadLaporan;
 use Illuminate\Database\Seeder;
+use Illuminate\Support\Facades\DB;
 
 class DatabaseSeeder extends Seeder
 {
@@ -28,49 +29,75 @@ class DatabaseSeeder extends Seeder
             'password' => bcrypt('bintang')
         ]);
 
-        // ArsipPermohonan::factory(500)->create();
-        // ArsipGugatan::factory(20)->create();
-        // ArsipPidana::factory(100)->create();
+        // Insert ke tabel jenis_laporan
+        $jenisLaporan = [
+            ['nama_jenis' => 'Laporan Online'],
+            ['nama_jenis' => 'Laporan Offline'],
+            ['nama_jenis' => 'Laporan Lain-Lain'],
+        ];
+        DB::table('jenis_laporan')->insert($jenisLaporan);
 
-        // 2. Buat jenis laporan
-        // $jenisLaporans = [
-        //     'Laporan Offline',
-        //     'Laporan Online',
-        //     'Laporan Lain-Lain'
-        // ];
+        // Ambil id dari jenis laporan
+        $laporanOnlineId   = DB::table('jenis_laporan')->where('nama_jenis', 'Laporan Online')->value('id');
+        $laporanOfflineId  = DB::table('jenis_laporan')->where('nama_jenis', 'Laporan Offline')->value('id');
+        $laporanLainId     = DB::table('jenis_laporan')->where('nama_jenis', 'Laporan Lain-Lain')->value('id');
 
-        // foreach ($jenisLaporans as $jenis) {
-        //     $jenisModel = JenisLaporan::factory()->create([
-        //         'nama_jenis' => $jenis
-        //     ]);
+        // Mapping bulan wajib sesuai periode
+        $bulanWajibMap = [
+            'Bulanan'    => [1,2,3,4,5,6,7,8,9,10,11,12],
+            'Triwulan'   => [3,6,9,12],
+            'Caturwulan' => [4,8,12],
+            'Semester'   => [6,12],
+            'Tahunan'    => [12],
+        ];
 
-        //     // 3. Buat laporan untuk jenis ini (5 laporan tiap jenis)
-        //     for ($i = 1; $i <= 5; $i++) {
-        //         $laporanModel = Laporan::factory()->create([
-        //             'jenis_laporan_id' => $jenisModel->id,
-        //             'nama_laporan' => $jenis . ' - Laporan ' . $i
-        //         ]);
+        // Daftar laporan Online
+        $laporanOnline = [
+            ['jenis_laporan_id' => $laporanOnlineId, 'nama_laporan' => 'Laporan Perkara',            'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOnlineId, 'nama_laporan' => 'Laporan Mediasi',            'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOnlineId, 'nama_laporan' => 'Laporan Diversi',            'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOnlineId, 'nama_laporan' => 'Laporan Sidang Keliling (luar gedung)',    'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOnlineId, 'nama_laporan' => 'Laporan Delegasi',           'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOnlineId, 'nama_laporan' => 'Laporan Prodeo (Pembebasan Biaya)',             'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOnlineId, 'nama_laporan' => 'Laporan Biaya (Keuangan Perkara)',              'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOnlineId, 'nama_laporan' => 'Laporan Restorative Justice (RJ)','periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOnlineId, 'nama_laporan' => 'Laporan Posbakum',           'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOnlineId, 'nama_laporan' => 'Laporan Pengaduan',          'periode_upload' => 'Bulanan'],
+        ];
 
-        //         // Ambil bulan wajib dari laporan ini
-        //         $bulanWajib = json_decode($laporanModel->bulan_wajib, true);
+        // Daftar laporan Offline
+        $laporanOffline = [
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan Survei Harian',                    'periode_upload'              => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan EIS',                              'periode_upload'              => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan Statistik Perkara',                'periode_upload'              => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan Keadaan Perkara (Pid & Perd)',     'periode_upload'              => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan SKM',                              'periode_upload'              => 'Triwulan'],
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan SPAK',                             'periode_upload'              => 'Triwulan'],
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan Upaya Hukum',                      'periode_upload'              => 'Caturwulan'],
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan Tahunan (Laptah) LKJIP',           'periode_upload'              => 'Tahunan'],
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan Informasi Publik',                 'periode_upload'              => 'Tahunan'],
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan Kegiatan Hakim',                   'periode_upload'              => 'Semester'],
+            ['jenis_laporan_id' => $laporanOfflineId, 'nama_laporan' => 'Laporan Data Responden',                   'periode_upload'              => 'Semester'],
+        ];
 
-        //         // 4. Buat laporan_tahun untuk tahun ini
-        //         $laporanTahun = LaporanTahun::factory()->create([
-        //             'laporan_id' => $laporanModel->id,
-        //             'tahun' => date('Y'),
-        //         ]);
+        // Daftar laporan Lain-Lain
+        $laporanLain = [
+            ['jenis_laporan_id' => $laporanLainId, 'nama_laporan' => 'Laporan Posbakum',                'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanLainId, 'nama_laporan' => 'Laporan Monev Akurasi Data SIPP', 'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanLainId, 'nama_laporan' => 'Laporan Monev PTSP',              'periode_upload' => 'Bulanan'],
+            ['jenis_laporan_id' => $laporanLainId, 'nama_laporan' => 'Laporan Rekapitulasi Gratifikasi','periode_upload' => 'Triwulan'],
+        ];
 
-        //         // 5. Buat upload_laporan hanya untuk bulan yang wajib
-        //         foreach ($bulanWajib as $bulan) {
-        //             if (rand(0,1)) { // 50% chance sudah diupload
-        //                 UploadLaporan::factory()->create([
-        //                     'laporan_tahun_id' => $laporanTahun->id,
-        //                     'bulan' => $bulan,
-        //                     'laporan_path' => 'laporan/' . $laporanModel->id . '/file_' . $bulan . '.pdf'
-        //                 ]);
-        //             }
-        //         }
-        //     }
-        // }
+        // Tambahkan field bulan_wajib sesuai periode
+        $mapBulan = function ($laporan) use ($bulanWajibMap) {
+            $laporan['bulan_wajib'] = json_encode($bulanWajibMap[$laporan['periode_upload']]);
+            return $laporan;
+        };
+
+        $laporanOnline  = array_map($mapBulan, $laporanOnline);
+        $laporanOffline = array_map($mapBulan, $laporanOffline);
+        $laporanLain    = array_map($mapBulan, $laporanLain);
+
+        DB::table('laporan')->insert(array_merge($laporanOnline, $laporanOffline, $laporanLain));
     }
 }
