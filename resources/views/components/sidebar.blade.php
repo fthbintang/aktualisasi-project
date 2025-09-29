@@ -17,11 +17,11 @@
 
         <x-sidebar-link href="{{ route('dashboard') }}" icon="ni ni-tv-2" label="Dashboard" />
 
-        @can('Kepaniteraan Hukum')
+        @can('Admin')
             <x-sidebar-link href="{{ route('pengguna.index') }}" icon="ni ni-single-02" label="Pengguna" />
         @endcan
 
-        @can('Kepaniteraan Hukum')
+        @canany(['Admin', 'Staff Kepaniteraan Hukum'])
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
                     Laporan Kepaniteraan Hukum
@@ -29,12 +29,16 @@
             </li>
             <x-sidebar-link href="{{ route('daftar_laporan.index') }}" icon="ni ni-books" label="Daftar Laporan" />
             <x-sidebar-link href="{{ route('laporan.index') }}" icon="ni ni-single-copy-04" label="Upload Laporan" />
-        @elseif(!auth()->user()->can('Kepaniteraan Pidana') && !auth()->user()->can('Kepaniteraan Perdata'))
+        @elseif(!auth()->user()->can('Staff Kepaniteraan Pidana') && !auth()->user()->can('Staff Kepaniteraan Perdata'))
+            <li class="nav-item mt-3">
+                <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
+                    Laporan Kepaniteraan Hukum
+                </h6>
+            </li>
             <x-sidebar-link href="{{ route('laporan.index') }}" icon="ni ni-single-copy-04" label="Laporan Hukum" />
-        @endcan
+        @endcanany
 
-
-        @can('Kepaniteraan Perdata')
+        @canany(['Admin', 'Staff Kepaniteraan Perdata'])
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
                     Laporan Kepaniteraan Perdata
@@ -42,7 +46,7 @@
             </li>
             <x-sidebar-link href="{{ route('laporan_perdata.index') }}" icon="ni ni-single-copy-04"
                 label="Upload Laporan" />
-        @elseif(!auth()->user()->can('Kepaniteraan Pidana'))
+        @elseif(!auth()->user()->can('Staff Kepaniteraan Pidana'))
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
                     Laporan Kepaniteraan Perdata
@@ -50,16 +54,16 @@
             </li>
             <x-sidebar-link href="{{ route('laporan_perdata.index') }}" icon="ni ni-single-copy-04"
                 label="Laporan Perdata" />
-        @endcan
+        @endcanany
 
-        @can('Kepaniteraan Pidana')
+        @canany(['Admin', 'Staff Kepaniteraan Pidana'])
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
                     Laporan Kepaniteraan Pidana
                 </h6>
             </li>
             <x-sidebar-link href="{{ route('laporan_pidana.index') }}" icon="ni ni-single-copy-04" label="Upload Laporan" />
-        @elseif(!auth()->user()->can('Kepaniteraan Perdata'))
+        @elseif(!auth()->user()->can('Staff Kepaniteraan Perdata'))
             <li class="nav-item mt-3">
                 <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">
                     Laporan Kepaniteraan Pidana
@@ -67,7 +71,6 @@
             </li>
             <x-sidebar-link href="{{ route('laporan_pidana.index') }}" icon="ni ni-single-copy-04" label="Laporan Pidana" />
         @endcan
-
 
         {{-- <li class="nav-item mt-3">
             <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Laporan Kepaniteraan Pidana</h6>

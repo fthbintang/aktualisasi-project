@@ -1,12 +1,12 @@
 <x-layout :breadcrumbs="$breadcrumbs">
     <div class="page-heading ms-3">
-        @can('Kepaniteraan Pidana')
+        @canany(['Admin', 'Staff Kepaniteraan Pidana'])
             <h3 class="text-white">Upload Laporan Pidana Bulanan</h3>
             <p class="text-white">Pilih bulan & tahun, lalu upload laporan pidana yang akan dikirim ke hukum.</p>
         @else
             <h3 class="text-white">Laporan Pidana Bulanan</h3>
             <p class="text-white">Silakan pilih bulan & tahun untuk melihat laporan pidana yang telah diunggah.</p>
-        @endcan
+        @endcanany
     </div>
 
     {{-- Filter Bulan & Tahun --}}
@@ -39,7 +39,7 @@
         </div>
     </div>
 
-    @can('Kepaniteraan Pidana')
+    @canany(['Admin', 'Staff Kepaniteraan Pidana'])
         {{-- Form Upload Laporan Baru --}}
         <div class="card mb-4">
             <div class="card-header pb-0">
@@ -101,7 +101,7 @@
 
             </div>
         </div>
-    @endcan
+    @endcanany
 
     <div class="page-content">
 
@@ -112,7 +112,7 @@
             </div>
             <div class="card-body">
 
-                @cannot('Kepaniteraan Pidana')
+                @cannot('Staff Kepaniteraan Pidana')
                     {{-- Penjelasan bulan laporan --}}
                     <div class="alert alert-info d-flex align-items-center" role="alert">
                         <i class="bi bi-info-circle me-2"></i>
@@ -134,9 +134,9 @@
                                 <th style="width: 30%">Nama Laporan</th>
                                 <th style="width: 25%">File</th>
                                 <th style="width: 25%">Catatan</th>
-                                @can('Kepaniteraan Pidana')
+                                @canany(['Admin', 'Staff Kepaniteraan Pidana'])
                                     <th style="width: 15%">Aksi</th>
-                                @endcan
+                                @endcanany
                             </tr>
                         </thead>
                         <tbody>
@@ -155,7 +155,7 @@
                                         @endif
                                     </td>
                                     <td class="text-center">{{ $detail->catatan ?? '-' }}</td>
-                                    @can('Kepaniteraan Pidana')
+                                    @canany(['Admin', 'Staff Kepaniteraan Pidana'])
                                         <td>
                                             {{-- Tombol Edit di dalam tabel --}}
                                             <button type="button" class="btn btn-primary btn-sm btn-edit"
@@ -230,7 +230,7 @@
                                                 </button>
                                             </form>
                                         </td>
-                                    @endcan
+                                    @endcanany
                                 </tr>
                             @empty
                                 <tr>
@@ -240,7 +240,7 @@
                         </tbody>
                     </table>
 
-                    @cannot('Kepaniteraan Pidana')
+                    @cannot('Staff Kepaniteraan Pidana')
                         @if ($laporanPidana->laporan_pidana_detail->count() > 0)
                             <div class="mt-3">
                                 <a href="{{ route('laporan_pidana.download_all', ['tahun' => $tahun, 'bulan' => $bulan]) }}"

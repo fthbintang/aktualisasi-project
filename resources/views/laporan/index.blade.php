@@ -38,12 +38,12 @@
                     </select>
                 </form>
 
-                @can('Kepaniteraan Hukum')
+                @canany(['Admin', 'Staff Kepaniteraan Hukum'])
                     {{-- Tombol tambah laporan --}}
                     <a href="{{ route('laporan_tahun.create', ['tahun' => $tahun]) }}" class="btn btn-primary">
                         Tambah Laporan Tahun Ini
                     </a>
-                @endcan
+                @endcanany
             </div>
         </div>
 
@@ -80,9 +80,9 @@
                                     @foreach (range(1, 12) as $month)
                                         <th class="text-center">{{ $bulanIndo[$month] }}</th>
                                     @endforeach
-                                    @can('Kepaniteraan Hukum')
+                                    @canany(['Admin', 'Staff Kepaniteraan Hukum'])
                                         <th class="text-center">#</th>
-                                    @endcan
+                                    @endcanany
                                 </tr>
                             </thead>
                             <tbody>
@@ -123,7 +123,7 @@
                                                 @endphp
                                                 <td class="text-center {{ $isWajib ? $warna : '' }}">
                                                     @if ($uploaded)
-                                                        @can('Kepaniteraan Hukum')
+                                                        @canany(['Admin', 'Staff Kepaniteraan Hukum'])
                                                             <!-- Ikon centang -->
                                                             <span class="bg-success text-white px-2 py-1 rounded"
                                                                 style="cursor:pointer;" data-bs-toggle="modal"
@@ -193,9 +193,9 @@
                                                                 target="_blank" class="btn btn-primary">
                                                                 Lihat
                                                             </a>
-                                                        @endcan
+                                                        @endcanany
                                                     @else
-                                                        @can('Kepaniteraan Hukum')
+                                                        @canany(['Admin', 'Staff Kepaniteraan Hukum'])
                                                             @if ($isWajib)
                                                                 <!-- Jika bulan wajib tapi belum ada upload -->
                                                                 <form action="{{ route('upload_laporan.store') }}"
@@ -221,11 +221,11 @@
                                                             @endif
                                                         @else
                                                             -
-                                                        @endcan
+                                                        @endcanany
                                                     @endif
                                                 </td>
                                             @endforeach
-                                            @can('Kepaniteraan Hukum')
+                                            @canany(['Admin', 'Staff Kepaniteraan Hukum'])
                                                 {{-- Kolom Hapus --}}
                                                 <td class="text-center">
                                                     <form
@@ -238,7 +238,7 @@
                                                         </button>
                                                     </form>
                                                 </td>
-                                            @endcan
+                                            @endcanany
                                         </tr>
                                     @endforeach
                                 @endforeach

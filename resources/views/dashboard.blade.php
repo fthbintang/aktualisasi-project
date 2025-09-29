@@ -35,7 +35,7 @@
     </div>
 
     {{-- Baris 2: Status Upload --}}
-    @can('Kepaniteraan Hukum')
+    @canany(['Admin', 'Staff Kepaniteraan Hukum'])
         <div class="row mt-4">
             <div class="col-12">
                 <div class="card">
@@ -74,7 +74,7 @@
                 </div>
             </div>
         </div>
-    @endcan
+    @endcanany
 
     {{-- Baris 3: Grafik --}}
     <div class="row mt-4">
@@ -127,7 +127,7 @@
             </div>
         </div>
 
-        @canany(['Kepaniteraan Hukum', 'Panitera', 'Ketua PN'])
+        @canany(['Admin', 'Staff Kepaniteraan Hukum', 'Panitera', 'Ketua PN'])
             <div class="col-md-6">
                 <div class="card">
                     <div class="card-header pb-0">

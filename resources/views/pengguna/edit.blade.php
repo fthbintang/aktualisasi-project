@@ -30,20 +30,26 @@
                         required>
                         <option value="" disabled {{ old('role', $pengguna->role) ? '' : 'selected' }}>Pilih Role
                         </option>
-                        <option value="Kepaniteraan Hukum"
-                            {{ old('role', $pengguna->role) == 'Kepaniteraan Hukum' ? 'selected' : '' }}>
-                            Kepaniteraan Hukum
+                        <option value="Admin" {{ old('role', $pengguna->role) == 'Admin' ? 'selected' : '' }}>
+                            Admin
                         </option>
-                        <option value="Kepaniteraan Perdata"
-                            {{ old('role', $pengguna->role) == 'Kepaniteraan Perdata' ? 'selected' : '' }}>
-                            Kepaniteraan Perdata
+                        <option value="Staff Kepaniteraan Hukum"
+                            {{ old('role', $pengguna->role) == 'Staff Kepaniteraan Hukum' ? 'selected' : '' }}>
+                            Staff Kepaniteraan Hukum
                         </option>
-                        <option value="Kepaniteraan Pidana"
-                            {{ old('role', $pengguna->role) == 'Kepaniteraan Pidana' ? 'selected' : '' }}>
-                            Kepaniteraan Pidana
+                        <option value="Staff Kepaniteraan Perdata"
+                            {{ old('role', $pengguna->role) == 'Staff Kepaniteraan Perdata' ? 'selected' : '' }}>
+                            Staff Kepaniteraan Perdata
+                        </option>
+                        <option value="Staff Kepaniteraan Pidana"
+                            {{ old('role', $pengguna->role) == 'Staff Kepaniteraan Pidana' ? 'selected' : '' }}>
+                            Staff Kepaniteraan Pidana
                         </option>
                         <option value="Panitera" {{ old('role', $pengguna->role) == 'Panitera' ? 'selected' : '' }}>
                             Panitera
+                        </option>
+                        <option value="Ketua PN" {{ old('role', $pengguna->role) == 'Ketua PN' ? 'selected' : '' }}>
+                            Ketua PN
                         </option>
                     </select>
                     @error('role')
