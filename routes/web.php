@@ -17,7 +17,7 @@ Route::middleware('guest')->group(function () {
     Route::post('/sign-in', [LoginController::class, 'authenticate'])->name('authentication');
 });
 
-Route::middleware(['auth', 'role:Kepaniteraan Hukum'])->group(function () {
+Route::middleware(['auth', 'role:Admin'])->group(function () {
     // PENGGUNA
     Route::get('/dashboard/pengguna', [UserController::class, 'index'])->name('pengguna.index');
     Route::get('/dashboard/pengguna/create', [UserController::class, 'create'])->name('pengguna.create');
@@ -25,7 +25,9 @@ Route::middleware(['auth', 'role:Kepaniteraan Hukum'])->group(function () {
     Route::get('/dashboard/pengguna/edit/{user}', [UserController::class, 'edit'])->name('pengguna.edit');
     Route::put('/dashboard/pengguna/edit/{user}/update', [UserController::class, 'update'])->name('pengguna.update');
     Route::delete('/dashboard/pengguna/destroy/{user}', [UserController::class, 'destroy'])->name('pengguna.destroy');
+});
 
+Route::middleware(['auth', 'role:Admin,Staff Kepaniteraan Hukum'])->group(function () {
     // LAPORAN
     // Route::patch('/dashboard/laporan/{id}/toggle', [LaporanController::class, 'toggle'])->name('laporan.toggle');
     Route::get('/dashboard/laporan/laporan_tahun/create', [LaporanController::class, 'create'])->name('laporan_tahun.create');
@@ -71,7 +73,7 @@ Route::middleware(['auth', 'role:Kepaniteraan Hukum'])->group(function () {
     Route::delete('/dashboard/arsip_pidana/destroy/{arsip_pidana}', [ArsipPidanaController::class, 'destroy'])->name('arsip_pidana.destroy');
 });
 
-Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Pidana,Kepaniteraan Perdata,Panitera,Ketua PN'])->group(function () {
+Route::middleware(['auth', 'role:Admin,Staff Kepaniteraan Hukum,Staff Kepaniteraan Pidana,Staff Kepaniteraan Perdata,Panitera,Ketua PN'])->group(function () {
     Route::post('/logout', [LoginController::class, 'logout'])->name('logout');
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 
@@ -92,7 +94,7 @@ Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Pidana,Kepanite
     Route::get('/dashboard/arsip_pidana', [ArsipPidanaController::class, 'index'])->name('arsip_pidana.index');
 });
 
-Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Perdata,Panitera,Ketua PN'])->group(function () {
+Route::middleware(['auth', 'role:Admin,Staff Kepaniteraan Hukum,Staff Kepaniteraan Perdata,Panitera,Ketua PN'])->group(function () {
     // LAPORAN PERDATA
     Route::get('/dashboard/laporan_perdata', [LaporanPerdataController::class, 'index'])->name('laporan_perdata.index');
     Route::post('/dashboard/laporan_perdata/store', [LaporanPerdataController::class, 'store'])->name('laporan_perdata.store');
@@ -102,7 +104,7 @@ Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Perdata,Paniter
 
 });
 
-Route::middleware(['auth', 'role:Kepaniteraan Hukum,Kepaniteraan Pidana,Panitera,Ketua PN'])->group(function () {
+Route::middleware(['auth', 'role:Admin,Staff Kepaniteraan Hukum,Staff Kepaniteraan Pidana,Panitera,Ketua PN'])->group(function () {
     // LAPORAN PIDANA
     Route::get('/dashboard/laporan_pidana', [LaporanPidanaController::class, 'index'])->name('laporan_pidana.index');
     Route::post('/dashboard/laporan_pidana/store', [LaporanPidanaController::class, 'store'])->name('laporan_pidana.store');

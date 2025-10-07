@@ -28,12 +28,17 @@
                     <select class="form-select @error('role') is-invalid @enderror" id="role" name="role"
                         required>
                         <option value="" disabled {{ old('role') ? '' : 'selected' }}>Pilih Role</option>
-                        <option value="Kepaniteraan Hukum" {{ old('role') == 'Kepaniteraan Hukum' ? 'selected' : '' }}>
-                            Kepaniteraan Hukum</option>
-                        <option value="Kepaniteraan Perdata"
-                            {{ old('role') == 'Kepaniteraan Perdata' ? 'selected' : '' }}>Kepaniteraan Perdata</option>
-                        <option value="Kepaniteraan Pidana"
-                            {{ old('role') == 'Kepaniteraan Pidana' ? 'selected' : '' }}>Kepaniteraan Pidana</option>
+                        <option value="Admin" {{ old('role') == 'Admin' ? 'selected' : '' }}>
+                            Admin</option>
+                        <option value="Staff Kepaniteraan Hukum"
+                            {{ old('role') == 'Staff Kepaniteraan Hukum' ? 'selected' : '' }}>
+                            Staff Kepaniteraan Hukum</option>
+                        <option value="Staff Kepaniteraan Perdata"
+                            {{ old('role') == 'Staff Kepaniteraan Perdata' ? 'selected' : '' }}>Staff Kepaniteraan
+                            Perdata</option>
+                        <option value="Staff Kepaniteraan Pidana"
+                            {{ old('role') == 'Staff Kepaniteraan Pidana' ? 'selected' : '' }}>Staff Kepaniteraan Pidana
+                        </option>
                         <option value="Panitera" {{ old('role') == 'Panitera' ? 'selected' : '' }}>Panitera</option>
                     </select>
                     @error('role')

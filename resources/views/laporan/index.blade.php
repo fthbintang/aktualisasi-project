@@ -1,6 +1,70 @@
 <x-layout :breadcrumbs="$breadcrumbs">
-    <div class="container-fluid py-4">
+    {{-- <style>
+        /* Sticky column */
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            /* supaya di atas cell lainnya */
+            background-color: #fff;
+            /* penting agar tidak transparan */
+            white-space: nowrap;
+            /* biar teks tidak pecah */
+        }
 
+        /* Untuk header baris "table-active" */
+        .table-active .sticky-col {
+            background-color: #f8f9fa !important;
+            /* warna abu2 header */
+            z-index: 3;
+            /* lebih tinggi supaya tidak ketutup */
+        }
+    </style> --}}
+
+    <style>
+        .table-responsive {
+            max-height: 700px;
+            /* tinggi scroll */
+            overflow-y: auto;
+            /* scroll vertical */
+            overflow-x: auto;
+            /* scroll horizontal */
+        }
+
+        /* Header bulan sticky */
+        .table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 5;
+            /* lebih rendah dari sticky-col */
+            background: #fff;
+        }
+
+        /* Sticky kolom Nama Laporan */
+        .sticky-col {
+            position: sticky;
+            left: 0;
+            z-index: 20;
+            /* pastikan lebih tinggi dari thead th */
+            background-color: #fff;
+            white-space: nowrap;
+        }
+
+        /* Sticky kolom Nama Laporan di baris header */
+        .table thead .sticky-col {
+            z-index: 30;
+            /* paling tinggi supaya tidak tertutup */
+            background: #fff;
+        }
+
+        /* Untuk header baris pembatas jenis */
+        .table-active .sticky-col {
+            background-color: #f8f9fa !important;
+            z-index: 25;
+        }
+    </style>
+
+    <div class="container-fluid py-4">
         {{-- Form Filter Tahun --}}
         <div class="card mb-4">
             <div class="card-body d-flex justify-content-between align-items-center">
@@ -17,12 +81,12 @@
                     </select>
                 </form>
 
-                @can('Kepaniteraan Hukum')
+                @canany(['Admin', 'Staff Kepaniteraan Hukum'])
                     {{-- Tombol tambah laporan --}}
                     <a href="{{ route('laporan_tahun.create', ['tahun' => $tahun]) }}" class="btn btn-primary">
                         Tambah Laporan Tahun Ini
                     </a>
-                @endcan
+                @endcanany
             </div>
         </div>
 
@@ -55,22 +119,24 @@
                         <table class="table table-bordered align-middle">
                             <thead>
                                 <tr>
-                                    <th>Nama Laporan</th>
+                                    <th class="sticky-col bg-white">Nama Laporan</th>
                                     @foreach (range(1, 12) as $month)
                                         <th class="text-center">{{ $bulanIndo[$month] }}</th>
                                     @endforeach
-                                    @can('Kepaniteraan Hukum')
+                                    @canany(['Admin', 'Staff Kepaniteraan Hukum'])
                                         <th class="text-center">#</th>
-                                    @endcan
+                                    @endcanany
                                 </tr>
                             </thead>
                             <tbody>
                                 @foreach ($laporanGrouped as $jenisId => $laporanGroup)
                                     <tr class="table-active">
-                                        <th colspan="{{ $colspan + 1 }}">
+                                        <th class="sticky-col bg-light">
                                             {{ optional($jenisLaporan->firstWhere('id', $jenisId))->nama_jenis ?? 'Tanpa Jenis' }}
                                         </th>
+                                        <td colspan="{{ $colspan }}" class="bg-light"></td>
                                     </tr>
+
                                     @foreach ($laporanGroup as $lt)
                                         @php
                                             $laporan = $lt->laporan;
@@ -84,7 +150,7 @@
                                             $warna = 'bg-secondary-subtle'; // warna abu-abu
                                         @endphp
                                         <tr id="row-laporan-{{ $laporan->id }}">
-                                            <td>
+                                            <td class="sticky-col bg-white">
                                                 {{ $laporan->nama_laporan }}
                                                 @if ($laporan->periode_upload)
                                                     <br><small
@@ -100,7 +166,7 @@
                                                 @endphp
                                                 <td class="text-center {{ $isWajib ? $warna : '' }}">
                                                     @if ($uploaded)
-                                                        @can('Kepaniteraan Hukum')
+                                                        @canany(['Admin', 'Staff Kepaniteraan Hukum'])
                                                             <!-- Ikon centang -->
                                                             <span class="bg-success text-white px-2 py-1 rounded"
                                                                 style="cursor:pointer;" data-bs-toggle="modal"
@@ -170,9 +236,9 @@
                                                                 target="_blank" class="btn btn-primary">
                                                                 Lihat
                                                             </a>
-                                                        @endcan
+                                                        @endcanany
                                                     @else
-                                                        @can('Kepaniteraan Hukum')
+                                                        @canany(['Admin', 'Staff Kepaniteraan Hukum'])
                                                             @if ($isWajib)
                                                                 <!-- Jika bulan wajib tapi belum ada upload -->
                                                                 <form action="{{ route('upload_laporan.store') }}"
@@ -198,11 +264,11 @@
                                                             @endif
                                                         @else
                                                             -
-                                                        @endcan
+                                                        @endcanany
                                                     @endif
                                                 </td>
                                             @endforeach
-                                            @can('Kepaniteraan Hukum')
+                                            @canany(['Admin', 'Staff Kepaniteraan Hukum'])
                                                 {{-- Kolom Hapus --}}
                                                 <td class="text-center">
                                                     <form
@@ -215,13 +281,13 @@
                                                         </button>
                                                     </form>
                                                 </td>
-                                            @endcan
+                                            @endcanany
                                         </tr>
                                     @endforeach
                                 @endforeach
                                 {{-- Tambahkan baris tombol download zip per bulan --}}
                                 <tr class="table-info">
-                                    <td><b>Download Semua Laporan</b></td>
+                                    <td class="sticky-col"><b>Download Semua Laporan</b></td>
                                     @foreach (range(1, 12) as $month)
                                         <td class="text-center">
                                             @php

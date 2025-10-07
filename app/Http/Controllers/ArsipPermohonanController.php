@@ -82,8 +82,8 @@ class ArsipPermohonanController extends Controller
             // updated_by null diganti '-'
             $item->updated_by = $item->updated_by ?? '-';
 
-            // Aksi khusus Kepaniteraan Hukum
-            if (Auth::check() && Auth::user()->role === 'Kepaniteraan Hukum') {
+            // Aksi khusus Staff Kepaniteraan Hukum
+            if (Auth::check() && in_array(Auth::user()->role, ['Staff Kepaniteraan Hukum', 'Admin'])) {
                 $editUrl = route('arsip_permohonan.edit', $item->id);
                 $deleteUrl = route('arsip_permohonan.destroy', $item->id);
 

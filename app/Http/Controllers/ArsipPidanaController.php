@@ -83,7 +83,7 @@ class ArsipPidanaController extends Controller
             // Pastikan updated_by selalu ada (kalau null diganti '-')
             $item->updated_by = $item->updated_by ?? '-';
 
-            if (Auth::check() && Auth::user()->role === 'Kepaniteraan Hukum') {
+            if (Auth::check() && in_array(Auth::user()->role, ['Staff Kepaniteraan Hukum', 'Admin'])) {
                 $editUrl = route('arsip_pidana.edit', $item->id);
                 $deleteUrl = route('arsip_pidana.destroy', $item->id);
 

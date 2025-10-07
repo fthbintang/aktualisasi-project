@@ -21,20 +21,20 @@ class LaporanFactory extends Factory
     public function definition()
     {
         $periode = $this->faker->randomElement([
-            'bulanan',
-            'triwulan',
-            'caturwulan',
-            'semester',
-            'tahunan'
+            'Bulanan',
+            'Triwulan',
+            'Caturwulan',
+            'Semester',
+            'Tahunan'
         ]);
 
         // mapping default bulan_wajib sesuai periode_upload
         $bulanWajibMap = [
-            'bulanan'    => [1,2,3,4,5,6,7,8,9,10,11,12],
-            'triwulan'   => [3,6,9,12], // biasanya laporan triwulan di akhir kuartal
-            'caturwulan' => [4,8,12],   // per 4 bulan
-            'semester' => [6,12],     // tengah & akhir tahun
-            'tahunan'    => [12],       // akhir tahun
+            'Bulanan'    => [1,2,3,4,5,6,7,8,9,10,11,12],
+            'Triwulan'   => [3,6,9,12], // biasanya laporan triwulan di akhir kuartal
+            'Caturwulan' => [4,8,12],   // per 4 bulan
+            'Semester' => [6,12],     // tengah & akhir tahun
+            'Tahunan'    => [12],       // akhir tahun
         ];
 
         return [
