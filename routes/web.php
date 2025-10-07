@@ -10,11 +10,16 @@ use App\Http\Controllers\LaporanPerdataController;
 use App\Http\Controllers\LaporanPidanaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PermohonanController;
 use App\Http\Controllers\UserController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [LoginController::class, 'index'])->name('login');
     Route::post('/sign-in', [LoginController::class, 'authenticate'])->name('authentication');
+
+    Route::get('/permohonan', [PermohonanController::class, 'index'])->name('permohonan.index');
+    Route::get('/permohonan/tidak_dipidana', [PermohonanController::class, 'index_tidak_dipidana'])->name('permohonan.tidak_dipidana');
+    Route::post('/permohonan/tidak-dipidana', [PermohonanController::class, 'store_tidak_dipidana'])->name('permohonan.tidak_dipidana.store');
 });
 
 Route::middleware(['auth', 'role:Admin'])->group(function () {
