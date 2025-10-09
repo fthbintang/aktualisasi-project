@@ -24,7 +24,7 @@ class DatabaseSeeder extends Seeder
         // 1. Buat user
         User::create([
             'nama_lengkap' => 'Muhammad Bintang Fathehah',
-            'role' => 'Kepaniteraan Hukum',
+            'role' => 'Staff Kepaniteraan Hukum',
             'username' => 'bintang',
             'password' => bcrypt('bintang')
         ]);

@@ -10,11 +10,17 @@ use App\Http\Controllers\LaporanPerdataController;
 use App\Http\Controllers\LaporanPidanaController;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\LoginController;
+use App\Http\Controllers\PermohonanController;
+use App\Http\Controllers\PermohonanDashboardController;
 use App\Http\Controllers\UserController;
 
 Route::middleware('guest')->group(function () {
     Route::get('/', [LoginController::class, 'index'])->name('login');
     Route::post('/sign-in', [LoginController::class, 'authenticate'])->name('authentication');
+
+    // Route::get('/permohonan', [PermohonanController::class, 'index'])->name('permohonan.index');
+    // Route::get('/permohonan/tidak_dipidana', [PermohonanController::class, 'index_tidak_dipidana'])->name('permohonan.tidak_dipidana');
+    // Route::post('/permohonan/tidak-dipidana', [PermohonanController::class, 'store_tidak_dipidana'])->name('permohonan.tidak_dipidana.store');
 });
 
 Route::middleware(['auth', 'role:Admin'])->group(function () {
@@ -71,6 +77,12 @@ Route::middleware(['auth', 'role:Admin,Staff Kepaniteraan Hukum'])->group(functi
     Route::post('/dashboard/arsip_pidana/store', [ArsipPidanaController::class, 'store'])->name('arsip_pidana.store');
     Route::put('/dashboard/arsip_pidana/update/{arsip_pidana}', [ArsipPidanaController::class, 'update'])->name('arsip_pidana.update');
     Route::delete('/dashboard/arsip_pidana/destroy/{arsip_pidana}', [ArsipPidanaController::class, 'destroy'])->name('arsip_pidana.destroy');
+
+    // PERMOHONAN
+    Route::get('/dashboard/permohonan_tidak_dipidana/', [PermohonanDashboardController::class, 'index'])->name('permohonan_tidak_dipidana.dashboard_index');
+    Route::get('/dashboard/permohonan_tidak_dipidana/data', [PermohonanDashboardController::class, 'getData'])->name('permohonan_tidak_dipidana.data');
+    Route::get('/dashboard/permohonan_tidak_dipidana/{id}/cetak', [PermohonanDashboardController::class, 'cetak_tidak_dipidana'])->name('permohonan_tidak_dipidana.cetak');
+
 });
 
 Route::middleware(['auth', 'role:Admin,Staff Kepaniteraan Hukum,Staff Kepaniteraan Pidana,Staff Kepaniteraan Perdata,Panitera,Ketua PN'])->group(function () {

@@ -95,6 +95,14 @@
         <x-sidebar-link href="{{ route('arsip_gugatan.index') }}" icon="ni ni-collection" label="Gugatan" />
         <x-sidebar-link href="{{ route('arsip_pidana.index') }}" icon="ni ni-world-2" label="Pidana" />
 
+        {{-- <li class="nav-item mt-3">
+            <h6 class="ps-4 ms-2 text-uppercase text-xs font-weight-bolder opacity-6">Surat Permohonan (PTSP)</h6>
+        </li>
+        <x-sidebar-link href="#" icon="ni ni-app" label="Kuasa Isidentil" />
+        <x-sidebar-link href="#" icon="ni ni-collection" label="Tidak Dicabut Hak Pilih" />
+        <x-sidebar-link href="{{ route('permohonan_tidak_dipidana.dashboard_index') }}" icon="ni ni-world-2"
+            label="Tidak Dipidana" />
+        <x-sidebar-link href="#" icon="ni ni-world-2" label="Tidak Waarmeking" /> --}}
     </ul>
     {{-- </div> --}}
 </aside>
